@@ -47,3 +47,15 @@ CREATE TABLE IF NOT EXISTS view_log (
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (book_id) REFERENCES books(book_id)
 );
+
+CREATE TABLE IF NOT EXISTS login_attempts (
+    attempt_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    email VARCHAR(100) NOT NULL,
+    success BOOLEAN NOT NULL,
+    ip_address VARCHAR(45),
+    user_agent TEXT,
+    attempt_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_email_time (email, attempt_time),
+    INDEX idx_ip_time (ip_address, attempt_time)
+);
