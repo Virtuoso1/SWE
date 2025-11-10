@@ -1,5 +1,5 @@
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Blueprint # type: ignore
 import sys
 from pathlib import Path
 
@@ -7,7 +7,7 @@ from pathlib import Path
 backend_dir = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(backend_dir))
 
-from db.helpers import list_books, get_book_by_id, add_book, delete_book, filter_books
+from db.helpers import *
 
 # Standard import for helpers
 #from db.helpers import list_books, get_book_by_id, add_book, delete_book, filter_books
@@ -15,9 +15,9 @@ from mysql.connector import Error  # type: ignore
 from typing import List, Dict, Any
 
 app = Flask(__name__)
-
+books_bp = Blueprint("books", __name__)
 # Route: List all books
-@app.route('/books', methods=['GET'])
+@books_bp.route('/books', methods=['GET'])
 def get_books():
 	try:
 		books = list_books()
@@ -26,7 +26,7 @@ def get_books():
 		return jsonify({'error': str(e)}), 500
 
 # Route: Get book by ID
-@app.route('/books/<int:book_id>', methods=['GET'])
+@books_bp.route('/books/<int:book_id>', methods=['GET'])
 def get_book(book_id):
 	try:
 		book = get_book_by_id(book_id)
@@ -38,7 +38,7 @@ def get_book(book_id):
 		return jsonify({'error': str(e)}), 500
 
 # Route: Add a new book
-@app.route('/books', methods=['POST'])
+@books_bp.route('/books', methods=['POST'])
 def add_new_book():
 	data = request.get_json()
 	try:
@@ -56,7 +56,7 @@ def add_new_book():
 		return jsonify({'error': str(e)}), 400
 
 # Route: Delete a book
-@app.route('/books/<int:book_id>', methods=['DELETE'])
+@books_bp.route('/books/<int:book_id>', methods=['DELETE'])
 def remove_book(book_id):
 	try:
 		delete_book(book_id)
@@ -65,7 +65,7 @@ def remove_book(book_id):
 		return jsonify({'error': str(e)}), 500
 
 # Route: Filter books
-@app.route('/books/filter', methods=['GET'])
+@books_bp.route('/books/filter', methods=['GET'])
 def filter_books_route():
 	title = request.args.get('title')
 	author = request.args.get('author')
