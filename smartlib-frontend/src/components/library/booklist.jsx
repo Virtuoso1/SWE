@@ -1,41 +1,48 @@
-import React, { useState } from "react";
-import booksData from "./librarydata";
+import React, { useState, useEffect } from "react";
 import BookCard from "./bookcard";
+import "./BookList.css";
 
 export default function BookList() {
-  const [books, setBooks] = useState(booksData);
+  const [books, setBooks] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredBooks = books.filter(
-    (book) =>
-      book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      book.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      book.category.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  useEffect(() => {
+    fetch("http://localhost:5000/books")
+      .then((response) => response.json())
+      .then((data) => setBooks(data))
+      .catch((error) => console.error("Error fetching books:", error));
+  }, []);
 
   const handleDelete = (id) => {
-    setBooks(books.filter((book) => book.id !== id));
+    fetch(`http://localhost:5000/books/${id}`, { method: "DELETE" })
+      .then((res) => res.json())
+      .then(() => setBooks(books.filter((book) => book.id !== id)))
+      .catch((err) => console.error("Error deleting book:", err));
   };
 
+  const filteredBooks = books.filter((book) =>
+    book.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
-    <div className="container mt-4">
-      <h2>📚 Library Catalogue</h2>
+    <div className="book-list-container">
+      <h2 className="book-list-title">Book List</h2>
       <input
         type="text"
-        placeholder="Search by title, author, or category"
-        className="form-control mb-3"
+        className="book-search-input"
+        placeholder="Search by title..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
-
-      <div className="row">
-        {filteredBooks.map((book) => (
-          <div className="col-md-4 mb-3" key={book.id}>
-            <BookCard book={book} onDelete={handleDelete} />
-          </div>
-        ))}
+      <div className="book-list-grid">
+        {filteredBooks.length === 0 ? (
+          <p className="no-books-message">No books found.</p>
+        ) : (
+          filteredBooks.map((book) => (
+            <BookCard key={book.id} book={book} onDelete={handleDelete} />
+          ))
+        )}
       </div>
     </div>
   );
 }
-

@@ -7,17 +7,20 @@ export default function AddBookForm({ onAdd }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const newBook = {
-      id: Date.now(),
-      title,
-      author,
-      category,
-      available: true,
-    };
-    onAdd(newBook);
-    setTitle("");
-    setAuthor("");
-    setCategory("");
+    const newBook = { title, author, category };
+    fetch("http://localhost:5000/books", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newBook),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        onAdd && onAdd(data);
+        setTitle("");
+        setAuthor("");
+        setCategory("");
+      })
+      .catch((err) => console.error("Error adding book:", err));
   };
 
   return (
@@ -48,7 +51,7 @@ export default function AddBookForm({ onAdd }) {
           className="form-control mb-2"
           required
         />
-        <button type="submit" className="btn btn-success">
+        <button type="submit" className="btn btn-primary">
           Add Book
         </button>
       </form>

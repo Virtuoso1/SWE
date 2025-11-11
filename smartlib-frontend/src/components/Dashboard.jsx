@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { getDashboard } from "./library/api";
+
+// Dummy implementation for getDashboard
+const getDashboard = async () => {
+  // Replace with actual API call if available
+  return { books: [
+    { id: 1, title: "Sample Book 1" },
+    { id: 2, title: "Sample Book 2" }
+  ] };
+};
 
 export default function Dashboard() {
   const [books, setBooks] = useState([]);

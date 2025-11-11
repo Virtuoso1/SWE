@@ -1,6 +1,10 @@
 # server.py
+<<<<<<< HEAD
 from flask import Flask, jsonify, session # type: ignore
 from flask import request
+=======
+from flask import Flask, jsonify, session, request # type: ignore
+>>>>>>> 13b67996a850c28e649a1ae15bbba127a01c2d8e
 from flask_cors import CORS # type: ignore
 from flask_session import Session # type: ignore
 from flask_wtf.csrf import CSRFProtect

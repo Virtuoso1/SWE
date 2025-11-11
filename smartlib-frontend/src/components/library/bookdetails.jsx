@@ -1,12 +1,17 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import booksData from "./librarydata";
 
 export default function BookDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [book, setBook] = useState(null);
 
-  const book = booksData.find((b) => b.id === parseInt(id));
+  useEffect(() => {
+    fetch(`http://localhost:5000/books/${id}`)
+      .then((res) => res.json())
+      .then((data) => setBook(data))
+      .catch((err) => console.error("Error fetching book:", err));
+  }, [id]);
 
   if (!book) {
     return (
@@ -19,11 +24,6 @@ export default function BookDetails() {
     );
   }
 
-  const handleBorrow = () => {
-    // Navigate to borrow request handler
-    navigate(`/borrow/${book.id}`);
-  };
-
   return (
     <div className="container mt-5">
       <div className="card shadow p-4">
@@ -31,16 +31,10 @@ export default function BookDetails() {
         <p><strong>Author:</strong> {book.author}</p>
         <p><strong>Category:</strong> {book.category}</p>
         <p><strong>Status:</strong> {book.available ? "Available ✅" : "Not Available ❌"}</p>
-
         <button
-          className="btn btn-primary mt-3"
-          onClick={handleBorrow}
-          disabled={!book.available}
+          className="btn btn-outline-secondary mt-3 ms-3"
+          onClick={() => navigate(-1)}
         >
-          Borrow Book
-        </button>
-
-        <button className="btn btn-outline-secondary mt-3 ms-3" onClick={() => navigate(-1)}>
           Back to Library
         </button>
       </div>

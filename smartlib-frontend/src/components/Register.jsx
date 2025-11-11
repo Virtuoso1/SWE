@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { register } from "./library/api";
+
+// Dummy implementation for register
+const register = async (form) => {
+  // Replace with actual API call if available
+  if (form.username && form.password) {
+    return { success: true, message: "Registration successful" };
+  }
+  return { success: false, message: "Please provide username and password" };
+};
 
 
 export default function Register({ onRegister }) {

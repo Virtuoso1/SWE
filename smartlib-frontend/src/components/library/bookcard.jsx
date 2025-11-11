@@ -27,6 +27,8 @@ export default function BookCard({ book, onDelete }) {
           <button
             className="btn btn-sm btn-danger"
             onClick={() => onDelete(book.id)}
+            
+            
           >
             Delete
           </button>
