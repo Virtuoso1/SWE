@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import BookCard from "./bookcard";
+import "./BookList.css";
 
 export default function BookList() {
   const [books, setBooks] = useState([]);
@@ -24,17 +25,18 @@ export default function BookList() {
   );
 
   return (
-    <div>
-      <h2>Book List</h2>
+    <div className="book-list-container">
+      <h2 className="book-list-title">Book List</h2>
       <input
         type="text"
+        className="book-search-input"
         placeholder="Search by title..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
-      <div>
+      <div className="book-list-grid">
         {filteredBooks.length === 0 ? (
-          <p>No books found.</p>
+          <p className="no-books-message">No books found.</p>
         ) : (
           filteredBooks.map((book) => (
             <BookCard key={book.id} book={book} onDelete={handleDelete} />
