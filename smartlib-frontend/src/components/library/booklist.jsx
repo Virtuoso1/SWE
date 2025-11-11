@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import booksData from "../librarydata";
+import booksData from "./librarydata";
 import BookCard from "./bookcard";
 
 export default function BookList() {
