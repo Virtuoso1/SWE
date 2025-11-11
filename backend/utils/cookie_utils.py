@@ -386,3 +386,97 @@ def rotate_cookie(
 def validate_cookie_integrity(name: str) -> bool:
     """Convenience function to validate cookie integrity"""
     return cookie_manager.validate_cookie_integrity(name)
+
+def set_user_preferences(self, response, preferences: Dict[str, Any]) -> None:
+    """Set user preferences cookie"""
+    cookie_manager.set_preference_cookie(response, preferences)
+
+def get_user_preferences(self) -> Optional[Dict[str, Any]]:
+    """Get user preferences cookie"""
+    return cookie_manager.get_preference_cookie()
+
+def set_session_data(self, response, session_data: Dict[str, Any]) -> None:
+    """Set session data cookie"""
+    cookie_manager.set_user_session_cookie(response, session_data)
+
+def get_session_data(self) -> Optional[Dict[str, Any]]:
+    """Get session data cookie"""
+    return cookie_manager.get_user_session_cookie()
+
+def clear_session_data(self, response) -> None:
+    """Clear session data cookie"""
+    cookie_manager.clear_user_session_cookie(response)
+
+def set_csrf_protection(self, response, csrf_token: str) -> None:
+    """Set CSRF protection cookie"""
+    cookie_manager.set_csrf_cookie(response, csrf_token)
+
+def get_csrf_protection(self) -> Optional[str]:
+    """Get CSRF protection cookie"""
+    return cookie_manager.get_csrf_cookie()
+
+def set_remember_me(self, response, user_data: Dict[str, Any], days: int = 30) -> None:
+    """Set remember me cookie with extended expiration"""
+    import time
+    max_age = days * 24 * 60 * 60  # Convert days to seconds
+    
+    # Add remember flag to user data
+    user_data['remember_me'] = True
+    user_data['expires'] = time.time() + max_age
+    
+    cookie_manager.set_user_session_cookie(response, user_data)
+
+def validate_remember_me(self) -> bool:
+    """Validate remember me cookie"""
+    session_data = self.get_session_data()
+    if not session_data:
+        return False
+    
+    remember_me = session_data.get('remember_me', False)
+    expires = session_data.get('expires', 0)
+    
+    if not remember_me or not expires:
+        return False
+    
+    # Check if still valid
+    return time.time() < expires
+
+def clear_all_auth_cookies(self, response) -> None:
+    """Clear all authentication-related cookies"""
+    auth_cookies = ['user_session', 'csrf_token', 'user_preferences']
+    for cookie_name in auth_cookies:
+        cookie_manager.delete_cookie(response, cookie_name)
+
+def get_auth_status(self) -> Dict[str, Any]:
+    """Get authentication status from cookies"""
+    session_data = self.get_session_data()
+    csrf_token = self.get_csrf_protection()
+    
+    return {
+        'authenticated': bool(session_data and session_data.get('user_id')),
+        'user_id': session_data.get('user_id') if session_data else None,
+        'role': session_data.get('role') if session_data else None,
+        'csrf_token': csrf_token,
+        'remember_me': session_data.get('remember_me', False) if session_data else False
+    }
+
+# Convenience functions that use the global cookie manager
+def set_secure_cookie(response, name: str, value: Dict[str, Any], **kwargs) -> None:
+    """Convenience function to set a secure cookie"""
+    cookie_manager.set_secure_cookie(response, name, value, **kwargs)
+
+def get_secure_cookie(name: str) -> Optional[Dict[str, Any]]:
+    """Convenience function to get a secure cookie"""
+    return cookie_manager.get_secure_cookie(name)
+
+def delete_secure_cookie(response, name: str, **kwargs) -> None:
+    """Convenience function to delete a secure cookie"""
+    cookie_manager.delete_cookie(response, name, **kwargs)
+
+def set_json_cookie(response, name: str, data: Dict[str, Any], **kwargs) -> None:
+    """Convenience function to set a JSON cookie"""
+    cookie_manager.set_json_cookie(response, name, data, **kwargs)
+
+def get_json_cookie(name: str) -> Optional[Dict[str, Any]]:
+    """Convenience function to get a JSON cookie"""
+    return cookie_manager.get_json_cookie(name)

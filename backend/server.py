@@ -1,10 +1,5 @@
 # server.py
-<<<<<<< HEAD
-from flask import Flask, jsonify, session # type: ignore
-from flask import request
-=======
 from flask import Flask, jsonify, session, request # type: ignore
->>>>>>> 13b67996a850c28e649a1ae15bbba127a01c2d8e
 from flask_cors import CORS # type: ignore
 from flask_session import Session # type: ignore
 from flask_wtf.csrf import CSRFProtect
@@ -26,10 +21,10 @@ from routes.database_management import database_bp
 from routes.auth_monitoring import monitoring_bp
 from routes.user_behavior import behavior_bp
 from books.books import books_bp
-#from routes.users import users_bp
-#from routes.borrows import borrows_bp
-#from routes.fines import fines_bp
-#from routes.dashboard import dashboard_bp
+from routes.users import users_bp
+from routes.borrows import borrows_bp
+from routes.fines import fines_bp
+from routes.dashboard import dashboard_bp
 
 # Import services
 from services.jwt_service import JWTService
@@ -120,10 +115,10 @@ app.register_blueprint(database_bp)
 app.register_blueprint(monitoring_bp)
 app.register_blueprint(behavior_bp)
 app.register_blueprint(books_bp)
-#app.register_blueprint(users_bp)
-#app.register_blueprint(borrows_bp)
-#app.register_blueprint(fines_bp)
-#app.register_blueprint(dashboard_bp)
+app.register_blueprint(users_bp)
+app.register_blueprint(borrows_bp)
+app.register_blueprint(fines_bp)
+app.register_blueprint(dashboard_bp)
 
 @app.before_request
 def before_request():

@@ -3,12 +3,17 @@ from mysql.connector import Error #type: ignore
 from dotenv import load_dotenv #type: ignore
 from pathlib import Path
 import os
+import logging
 
 # Load env
 env_path = Path(__file__).resolve().parent / ".env"
 load_dotenv(dotenv_path=env_path)
 
+# Configure logging
+logger = logging.getLogger(__name__)
+
 def create_database_if_missing(silent = False):
+    """Create database if it doesn't exist"""
     db_name = os.getenv("DB_NAME")
     try:
         conn = mysql.connector.connect(
@@ -20,15 +25,15 @@ def create_database_if_missing(silent = False):
         cursor = conn.cursor()
         if not silent:
             cursor.execute(f"CREATE DATABASE IF NOT EXISTS `{db_name}`")
-        if not silent:
-            print(f"Database '{db_name}' is ready.")
+            logger.info(f"Database '{db_name}' is ready.")
         cursor.close()
         conn.close()
     except Error as e:
         if not silent:
-            print("Error while creating database:", e)
+            logger.error(f"Error while creating database: {e}")
 
 def get_connection(silent = False):
+    """Get database connection"""
     try:
         conn = mysql.connector.connect(
             host=os.getenv("DB_HOST"),
@@ -40,15 +45,16 @@ def get_connection(silent = False):
         return conn
     except Error as e:
         if not silent:
-            print("Database connection error:", e)
+            logger.error(f"Database connection error: {e}")
         return None
 
 def init_db(silent = False):
+    """Initialize database with schema"""
     create_database_if_missing(silent)
     conn = get_connection(silent)
     if not conn:
         if not silent:
-            print("Could not connect to database.")
+            logger.error("Could not connect to database.")
         return
 
     cursor = conn.cursor()
@@ -63,11 +69,26 @@ def init_db(silent = False):
                 cursor.execute(stmt)
             except Error as e:
                 if not silent:
-                    print("Error executing SQL statement:", e)
+                    logger.error(f"Error executing SQL statement: {e}")
 
     conn.commit()
     cursor.close()
     conn.close()
     if not silent:
-        if not silent:
-            print("Tables initialized successfully.")
+        logger.info("Tables initialized successfully.")
+
+# Import models and repositories for easy access
+from .models import User, Book, BorrowRecord, Fine, ViewLog, LoginAttempt, LibraryStats
+from .repositories import get_repositories
+
+# Export all models and repositories
+__all__ = [
+    # Models
+    'User', 'Book', 'BorrowRecord', 'Fine', 'ViewLog', 'LoginAttempt', 'LibraryStats',
+    # Repositories
+    'user_repository', 'book_repository', 'borrow_repository',
+    'fine_repository', 'view_log_repository', 'login_attempt_repository',
+    'library_stats_repository',
+    # Database functions
+    'create_database_if_missing', 'get_connection', 'init_db'
+]

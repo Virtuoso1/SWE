@@ -18,44 +18,58 @@ class OAuthService:
     """OAuth 2.0 integration service for third-party authentication"""
     
     def __init__(self, app=None):
+        self.app = app
+        self.oauth = None
+        self._initialized = False
+        if app:
+            self.init_app(app)
+    
+    def init_app(self, app):
+        """Initialize OAuth service with Flask app"""
+        self.app = app
         self.oauth = OAuth(app)
         self._init_providers()
     
     def _init_providers(self):
         """Initialize OAuth providers"""
+        if not self.app or not hasattr(self.app, 'config'):
+            # Defer initialization if no app context
+            return
+            
         try:
             # Google OAuth
             self.oauth.register(
                 name='google',
-                client_id=current_app.config.get('GOOGLE_CLIENT_ID'),
-                client_secret=current_app.config.get('GOOGLE_CLIENT_SECRET'),
+                client_id=self.app.config.get('GOOGLE_CLIENT_ID'),
+                client_secret=self.app.config.get('GOOGLE_CLIENT_SECRET'),
                 server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
                 client_kwargs={'scope': 'openid email profile'},
-                redirect_uri=current_app.config.get('GOOGLE_REDIRECT_URI', url_for('auth.google_callback', _external=True))
+                redirect_uri=self.app.config.get('GOOGLE_REDIRECT_URI', url_for('auth.google_callback', _external=True))
             )
             
             # Microsoft OAuth
             self.oauth.register(
                 name='microsoft',
-                client_id=current_app.config.get('MICROSOFT_CLIENT_ID'),
-                client_secret=current_app.config.get('MICROSOFT_CLIENT_SECRET'),
+                client_id=self.app.config.get('MICROSOFT_CLIENT_ID'),
+                client_secret=self.app.config.get('MICROSOFT_CLIENT_SECRET'),
                 authorize_url='https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
                 token_url='https://login.microsoftonline.com/common/oauth2/v2.0/token',
                 client_kwargs={'scope': 'openid email profile'},
-                redirect_uri=current_app.config.get('MICROSOFT_REDIRECT_URI', url_for('auth.microsoft_callback', _external=True))
+                redirect_uri=self.app.config.get('MICROSOFT_REDIRECT_URI', url_for('auth.microsoft_callback', _external=True))
             )
             
             # GitHub OAuth
             self.oauth.register(
                 name='github',
-                client_id=current_app.config.get('GITHUB_CLIENT_ID'),
-                client_secret=current_app.config.get('GITHUB_CLIENT_SECRET'),
+                client_id=self.app.config.get('GITHUB_CLIENT_ID'),
+                client_secret=self.app.config.get('GITHUB_CLIENT_SECRET'),
                 authorize_url='https://github.com/login/oauth/authorize',
                 token_url='https://github.com/login/oauth/access_token',
                 client_kwargs={'scope': 'user:email'},
-                redirect_uri=current_app.config.get('GITHUB_REDIRECT_URI', url_for('auth.github_callback', _external=True))
+                redirect_uri=self.app.config.get('GITHUB_REDIRECT_URI', url_for('auth.github_callback', _external=True))
             )
             
+            self._initialized = True
             logger.info("OAuth providers initialized successfully")
             
         except Exception as e:
