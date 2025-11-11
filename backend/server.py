@@ -1,5 +1,5 @@
 # server.py
-from flask import Flask, jsonify, session # type: ignore
+from flask import Flask, jsonify, session, request # type: ignore
 from flask_cors import CORS # type: ignore
 from flask_session import Session # type: ignore
 import logging
