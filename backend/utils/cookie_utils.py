@@ -33,11 +33,13 @@ class SecureCookieManager:
         """Initialize the cookie manager with Flask app"""
         self.app = app
         
-        # Initialize encryption cipher
-        self._init_cipher()
-        
-        # Initialize signing key
-        self._init_signing_key()
+        # Initialize within app context
+        with app.app_context():
+            # Initialize encryption cipher
+            self._init_cipher()
+            
+            # Initialize signing key
+            self._init_signing_key()
     
     def _init_cipher(self):
         """Initialize the encryption cipher using PBKDF2"""

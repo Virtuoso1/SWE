@@ -34,12 +34,10 @@ python3-saml==1.15.0
 flask-limiter==3.5.0
 
 # Device fingerprinting
-fingerprintjs==0.1.0
 user-agents==2.2.0
 
 # Audit logging and security
 python-dateutil==2.8.2
-hashlib-compat==1.0.1
 
 # Monitoring and analytics
 prometheus-client==0.17.1
@@ -60,8 +58,7 @@ pytest-json-report==1.5.0
 
 # Production dependencies
 gunicorn==21.2.0
-gevent==23.7.0
 
 # Security scanning
 bandit==1.7.5
-safety==2.3.5
+safety==3.0.1

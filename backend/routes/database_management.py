@@ -32,7 +32,7 @@ def admin_required(f):
 
 @database_bp.route('/pool/stats', methods=['GET'])
 @jwt_required
-@permission_required('database_view')
+@permission_required('database', 'view')
 def get_pool_stats():
     """Get database connection pool statistics"""
     try:
@@ -68,7 +68,7 @@ def reset_pool_stats():
 
 @database_bp.route('/query/analyze', methods=['POST'])
 @jwt_required
-@permission_required('database_query')
+@permission_required('database', 'query')
 def analyze_query():
     """Analyze a SQL query for optimization opportunities"""
     try:
@@ -98,7 +98,7 @@ def analyze_query():
 
 @database_bp.route('/query/execute', methods=['POST'])
 @jwt_required
-@permission_required('database_query')
+@permission_required('database', 'query')
 def execute_query():
     """Execute a SQL query with optimization"""
     try:
@@ -133,7 +133,7 @@ def execute_query():
 
 @database_bp.route('/query/batch', methods=['POST'])
 @jwt_required
-@permission_required('database_query')
+@permission_required('database', 'query')
 def execute_batch():
     """Execute multiple queries in a batch"""
     try:
@@ -167,7 +167,7 @@ def execute_batch():
 
 @database_bp.route('/query/procedure', methods=['POST'])
 @jwt_required
-@permission_required('database_query')
+@permission_required('database', 'query')
 def execute_procedure():
     """Execute a stored procedure"""
     try:
@@ -197,7 +197,7 @@ def execute_procedure():
 
 @database_bp.route('/performance/metrics', methods=['GET'])
 @jwt_required
-@permission_required('database_view')
+@permission_required('database', 'view')
 def get_performance_metrics():
     """Get query performance metrics"""
     try:
@@ -215,7 +215,7 @@ def get_performance_metrics():
 
 @database_bp.route('/performance/slow-queries', methods=['GET'])
 @jwt_required
-@permission_required('database_view')
+@permission_required('database', 'view')
 def get_slow_queries():
     """Get recent slow queries"""
     try:
@@ -239,7 +239,7 @@ def get_slow_queries():
 
 @database_bp.route('/performance/index-recommendations', methods=['GET'])
 @jwt_required
-@permission_required('database_view')
+@permission_required('database', 'view')
 def get_index_recommendations():
     """Get index recommendations"""
     try:
@@ -311,7 +311,7 @@ def reset_metrics():
 
 @database_bp.route('/tables', methods=['GET'])
 @jwt_required
-@permission_required('database_view')
+@permission_required('database', 'view')
 def get_tables():
     """Get list of database tables"""
     try:
@@ -351,7 +351,7 @@ def get_tables():
 
 @database_bp.route('/tables/<table_name>/describe', methods=['GET'])
 @jwt_required
-@permission_required('database_view')
+@permission_required('database', 'view')
 def describe_table(table_name):
     """Get table structure"""
     try:
@@ -432,7 +432,7 @@ def optimize_table(table_name):
 
 @database_bp.route('/health', methods=['GET'])
 @jwt_required
-@permission_required('database_view')
+@permission_required('database', 'view')
 def database_health():
     """Get database health status"""
     try:

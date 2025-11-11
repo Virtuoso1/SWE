@@ -33,7 +33,7 @@ def security_admin_required(f):
 
 @monitoring_bp.route('/events', methods=['GET'])
 @jwt_required
-@permission_required('security_view')
+@permission_required('security', 'view')
 def get_auth_events():
     """Get recent authentication events"""
     try:
@@ -71,7 +71,7 @@ def get_auth_events():
 
 @monitoring_bp.route('/events/track', methods=['POST'])
 @jwt_required
-@permission_required('security_monitor')
+@permission_required('security', 'monitor')
 def track_auth_event():
     """Track an authentication event (internal use)"""
     try:
@@ -126,7 +126,7 @@ def track_auth_event():
 
 @monitoring_bp.route('/alerts', methods=['GET'])
 @jwt_required
-@permission_required('security_view')
+@permission_required('security', 'view')
 def get_security_alerts():
     """Get recent security alerts"""
     try:
@@ -225,7 +225,7 @@ def resolve_alert(alert_id):
 
 @monitoring_bp.route('/stats', methods=['GET'])
 @jwt_required
-@permission_required('security_view')
+@permission_required('security', 'view')
 def get_monitoring_stats():
     """Get monitoring statistics"""
     try:
@@ -244,7 +244,7 @@ def get_monitoring_stats():
 
 @monitoring_bp.route('/dashboard', methods=['GET'])
 @jwt_required
-@permission_required('security_view')
+@permission_required('security', 'view')
 def get_security_dashboard():
     """Get security dashboard data"""
     try:
@@ -292,7 +292,7 @@ def get_security_dashboard():
 
 @monitoring_bp.route('/threat-intelligence', methods=['GET'])
 @jwt_required
-@permission_required('security_view')
+@permission_required('security', 'view')
 def get_threat_intelligence():
     """Get threat intelligence data"""
     try:
@@ -380,7 +380,7 @@ def update_monitoring_settings():
 
 @monitoring_bp.route('/export/events', methods=['GET'])
 @jwt_required
-@permission_required('security_export')
+@permission_required('security', 'export')
 def export_events():
     """Export authentication events"""
     try:
@@ -416,7 +416,7 @@ def export_events():
 
 @monitoring_bp.route('/export/alerts', methods=['GET'])
 @jwt_required
-@permission_required('security_export')
+@permission_required('security', 'export')
 def export_alerts():
     """Export security alerts"""
     try:

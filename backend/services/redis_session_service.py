@@ -41,11 +41,13 @@ class RedisSessionService:
         self.app = app
         app.redis_session_service = self
         
-        # Initialize Redis connection
-        self._init_redis()
-        
-        # Initialize encryption
-        self._init_encryption()
+        # Initialize within app context
+        with app.app_context():
+            # Initialize Redis connection
+            self._init_redis()
+            
+            # Initialize encryption
+            self._init_encryption()
         
         # Set session prefix
         self._session_prefix = app.config.get('REDIS_SESSION_PREFIX', 'session:')

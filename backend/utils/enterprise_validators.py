@@ -818,3 +818,60 @@ class RateLimitValidator:
             'is_valid': len(issues) == 0,
             'issues': issues
         }
+
+def validate_pagination(page: int, per_page: int, max_per_page: int = 100) -> Dict[str, Any]:
+    """
+    Validate pagination parameters
+    
+    Args:
+        page: Page number
+        per_page: Items per page
+        max_per_page: Maximum allowed items per page
+        
+    Returns:
+        Dict containing validation result
+    """
+    issues = []
+    
+    if not isinstance(page, int) or page < 1:
+        issues.append('Page must be a positive integer')
+    
+    if not isinstance(per_page, int) or per_page < 1:
+        issues.append('Per page must be a positive integer')
+    elif per_page > max_per_page:
+        issues.append(f'Per page cannot exceed {max_per_page}')
+    
+    return {
+        'is_valid': len(issues) == 0,
+        'issues': issues,
+        'page': max(1, page) if isinstance(page, int) else 1,
+        'per_page': min(max(1, per_page), max_per_page) if isinstance(per_page, int) else 10
+    }
+
+def validate_sort_order(sort_by: str, valid_fields: List[str],
+                      sort_order: str = 'asc') -> Dict[str, Any]:
+    """
+    Validate sort order parameters
+    
+    Args:
+        sort_by: Field to sort by
+        valid_fields: List of valid sort fields
+        sort_order: Sort order ('asc' or 'desc')
+        
+    Returns:
+        Dict containing validation result
+    """
+    issues = []
+    
+    if sort_by and sort_by not in valid_fields:
+        issues.append(f'Invalid sort field. Must be one of: {", ".join(valid_fields)}')
+    
+    if sort_order not in ['asc', 'desc']:
+        issues.append('Sort order must be "asc" or "desc"')
+    
+    return {
+        'is_valid': len(issues) == 0,
+        'issues': issues,
+        'sort_by': sort_by if sort_by in valid_fields else valid_fields[0],
+        'sort_order': sort_order if sort_order in ['asc', 'desc'] else 'asc'
+    }
