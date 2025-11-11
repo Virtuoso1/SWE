@@ -154,3 +154,53 @@ class AuthService:
         except Exception as e:
             logger.error(f"Rate limit check error: {str(e)}")
             return True  # Allow if check fails
+    
+    @staticmethod
+    def register_user(email: str, password: str, full_name: str, role: str = "student") -> Optional[Dict[str, Any]]:
+        """
+        Register a new user in the database
+        
+        Args:
+            email: User's email address
+            password: User's plain text password
+            full_name: User's full name
+            role: User's role (default: 'student')
+            
+        Returns:
+            Dict containing user data if registration successful, None otherwise
+        """
+        try:
+            # Check if user already exists
+            existing_user = get_user_by_email(email)
+            if existing_user:
+                logger.warning(f"Registration failed: User with email {email} already exists")
+                return None
+            
+            # Import here to avoid circular imports
+            from db.helpers import add_user
+            
+            # Add user to database
+            add_user(full_name, email, password, role)
+            
+            # Get the newly created user
+            new_user = get_user_by_email(email)
+            
+            if new_user:
+                # Remove sensitive data before returning
+                user_data = {
+                    'user_id': new_user['user_id'],
+                    'full_name': new_user['full_name'],
+                    'email': new_user['email'],
+                    'role': new_user['role'],
+                    'status': new_user.get('status', 'active'),
+                    'date_joined': new_user.get('date_joined')
+                }
+                logger.info(f"User registered successfully: {email}")
+                return user_data
+            else:
+                logger.error(f"Failed to retrieve newly created user: {email}")
+                return None
+                
+        except Exception as e:
+            logger.error(f"User registration error: {str(e)}")
+            return None

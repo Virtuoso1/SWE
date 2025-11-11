@@ -2,24 +2,66 @@
 Flask==2.3.3
 Flask-CORS==4.0.0
 Flask-Session==0.5.0
+Flask-WTF==1.1.1
 
 # Database dependencies
 mysql-connector-python==8.1.0
+SQLAlchemy==2.0.21
+DBUtils==3.0.3
 
 # Security dependencies
 bcrypt==4.0.1
 python-dotenv==1.0.0
+PyJWT==2.8.0
+cryptography==41.0.4
+pyotp==2.9.0
+qrcode[pil]==7.4.2
 
 # Validation and utilities
 email-validator==2.0.0
 Werkzeug==2.3.7
+validators==0.22.0
+
+# Redis for session storage
+redis==4.6.0
+Flask-Redis==0.4.0
+
+# OAuth/SAML support
+authlib==1.2.1
+python3-saml==1.15.0
+
+# Rate limiting
+flask-limiter==3.5.0
+
+# Device fingerprinting
+fingerprintjs==0.1.0
+user-agents==2.2.0
+
+# Audit logging and security
+python-dateutil==2.8.2
+hashlib-compat==1.0.1
+
+# Monitoring and analytics
+prometheus-client==0.17.1
+statsd==4.0.1
 
 # Development and testing dependencies
 pytest==7.4.2
 pytest-flask==1.2.0
 pytest-cov==4.1.0
+pytest-xdist==3.3.1
+pytest-mock==3.11.1
+factory-boy==3.3.0
 black==23.7.0
 flake8==6.0.0
+coverage==7.3.2
+pytest-html==4.1.1
+pytest-json-report==1.5.0
 
 # Production dependencies
 gunicorn==21.2.0
+gevent==23.7.0
+
+# Security scanning
+bandit==1.7.5
+safety==2.3.5

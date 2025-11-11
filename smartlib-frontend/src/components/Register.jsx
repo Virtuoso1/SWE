@@ -3,7 +3,7 @@ import { register } from "./library/api";
 
 
 export default function Register({ onRegister }) {
-  const [form, setForm] = useState({ username: "", password: "" });
+  const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -32,7 +32,7 @@ export default function Register({ onRegister }) {
     <div>
       <h2>Register</h2>
       <form onSubmit={handleSubmit}>
-        <input name="username" placeholder="Username" value={form.username} onChange={handleChange} />
+        <input name="email" placeholder="Email" value={form.email} onChange={handleChange} />
         <input name="password" type="password" placeholder="Password" value={form.password} onChange={handleChange} />
         <button type="submit">Register</button>
       </form>

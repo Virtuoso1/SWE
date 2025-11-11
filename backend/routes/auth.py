@@ -254,3 +254,115 @@ def check_auth():
             "message": "An error occurred while checking authentication",
             "error_code": "AUTH_CHECK_ERROR"
         }), 500
+
+@auth_bp.route('/register', methods=['POST'])
+@cross_origin(supports_credentials=True)
+def register():
+    """
+    Register a new user
+    
+    Expected JSON payload:
+    {
+        "email": "user@example.com",
+        "password": "userpassword",
+        "full_name": "John Doe"
+    }
+    
+    Returns:
+        Success: {
+            "success": true,
+            "message": "Registration successful",
+            "user": {
+                "user_id": 1,
+                "full_name": "John Doe",
+                "email": "user@example.com",
+                "role": "student"
+            }
+        }
+        
+        Error: {
+            "success": false,
+            "message": "Error description",
+            "error_code": "ERROR_CODE"
+        }
+    """
+    try:
+        # Get JSON data from request
+        data = request.get_json()
+        
+        # Validate request data
+        if not data:
+            return jsonify({
+                "success": False,
+                "message": "Invalid request format. JSON data required.",
+                "error_code": "INVALID_REQUEST"
+            }), 400
+        
+        # Extract and validate email
+        email = data.get('email', '').strip().lower()
+        if not email:
+            return jsonify({
+                "success": False,
+                "message": "Email is required",
+                "error_code": "MISSING_EMAIL"
+            }), 400
+            
+        if not validate_email(email):
+            return jsonify({
+                "success": False,
+                "message": "Invalid email format",
+                "error_code": "INVALID_EMAIL"
+            }), 400
+        
+        # Extract and validate password
+        password = data.get('password', '')
+        if not password:
+            return jsonify({
+                "success": False,
+                "message": "Password is required",
+                "error_code": "MISSING_PASSWORD"
+            }), 400
+            
+        if not validate_password(password):
+            return jsonify({
+                "success": False,
+                "message": "Password must be at least 8 characters long",
+                "error_code": "INVALID_PASSWORD"
+            }), 400
+        
+        # Extract full name (optional but recommended)
+        full_name = data.get('full_name', '').strip()
+        if not full_name:
+            full_name = email.split('@')[0]  # Use email prefix as default name
+        
+        # Register user using AuthService
+        user_data = AuthService.register_user(email, password, full_name)
+        
+        if user_data:
+            logger.info(f"New user registered: {email}")
+            
+            # Return success response
+            return jsonify({
+                "success": True,
+                "message": "Registration successful",
+                "user": {
+                    "user_id": user_data['user_id'],
+                    "full_name": user_data['full_name'],
+                    "email": user_data['email'],
+                    "role": user_data['role']
+                }
+            }), 201
+        else:
+            return jsonify({
+                "success": False,
+                "message": "Registration failed. User may already exist.",
+                "error_code": "REGISTRATION_FAILED"
+            }), 400
+            
+    except Exception as e:
+        logger.error(f"Register endpoint error: {str(e)}", exc_info=True)
+        return jsonify({
+            "success": False,
+            "message": "An internal server error occurred. Please try again later.",
+            "error_code": "INTERNAL_ERROR"
+        }), 500

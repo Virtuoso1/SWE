@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { login } from "./library/api";
 
 export default function Login({ onLogin }) {
-  const [form, setForm] = useState({ username: "", password: "" });
+  const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
 
   const handleChange = e => {
@@ -29,7 +29,7 @@ export default function Login({ onLogin }) {
       <h2>Login</h2>
       <div style={{color:'blue', marginBottom:'1em'}}>If you see this message, the Login component is rendering.</div>
       <form onSubmit={handleSubmit}>
-        <input name="username" placeholder="Username" value={form.username} onChange={handleChange} />
+        <input name="email" placeholder="Email" value={form.email} onChange={handleChange} />
         <input name="password" type="password" placeholder="Password" value={form.password} onChange={handleChange} />
         <button type="submit">Login</button>
       </form>
