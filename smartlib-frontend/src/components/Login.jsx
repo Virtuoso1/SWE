@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-//import { login } from "./library/api";
+
+// Dummy implementation for login
+const login = async (form) => {
+  // Replace with actual API call if available
+  if (form.username === "admin" && form.password === "admin") {
+    return { success: true, message: "Login successful" };
+  }
+  return { success: false, message: "Invalid credentials" };
+};
 
 export default function Login({ onLogin }) {
   const [form, setForm] = useState({ username: "", password: "" });

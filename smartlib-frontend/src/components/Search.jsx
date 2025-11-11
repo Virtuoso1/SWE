@@ -1,5 +1,15 @@
 import React, { useState } from "react";
-//import { searchBooks } from "./library/api";
+
+// Dummy implementation for searchBooks
+const searchBooks = async (query) => {
+  // Replace with actual API call if available
+  if (!query) return { books: [] };
+  return {
+    books: [
+      { id: 1, title: `Result for "${query}"` }
+    ]
+  };
+};
 
 export default function Search() {
   const [query, setQuery] = useState("");

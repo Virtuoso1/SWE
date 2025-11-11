@@ -1,28 +1,20 @@
-// src/components/library/editbookform.jsx
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 function EditBookForm() {
-  const { id } = useParams(); // get the book id from the URL
+  const { id } = useParams();
   const navigate = useNavigate();
-
-  // sample initial state — will load book details
   const [book, setBook] = useState({
     title: "",
     author: "",
-    description: "",
+    category: "",
   });
 
   useEffect(() => {
-    // In a real app, you’d fetch the book details from the backend
-    // For now, simulate fetching:
-    const storedBook = {
-      id,
-      title: "Sample Book Title",
-      author: "John Doe",
-      description: "A placeholder book used for editing demo.",
-    };
-    setBook(storedBook);
+    fetch(`http://localhost:5000/books/${id}`)
+      .then((res) => res.json())
+      .then((data) => setBook(data))
+      .catch((err) => console.error("Error fetching book:", err));
   }, [id]);
 
   const handleChange = (e) => {
@@ -32,9 +24,14 @@ function EditBookForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Edited book data:", book);
-    // Later you’ll send this to your backend via a PUT/PATCH request
-    navigate("/library"); // redirect to book list after editing
+    fetch(`http://localhost:5000/books/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(book),
+    })
+      .then((res) => res.json())
+      .then(() => navigate("/library"))
+      .catch((err) => console.error("Error updating book:", err));
   };
 
   return (
@@ -62,14 +59,18 @@ function EditBookForm() {
           />
         </div>
         <div>
-          <label>Description:</label>
-          <textarea
-            name="description"
-            value={book.description}
+          <label>Category:</label>
+          <input
+            type="text"
+            name="category"
+            value={book.category}
             onChange={handleChange}
+            required
           />
         </div>
-        <button type="submit">Save Changes</button>
+        <button type="submit" className="btn btn-primary">
+          Save Changes
+        </button>
       </form>
     </div>
   );
