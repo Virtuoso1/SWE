@@ -1,13 +1,18 @@
+"""
+Authentication routes for the Library Management System
+Handles HTTP requests and responses for authentication
+"""
+
 from flask import Blueprint, request, jsonify, session
 from flask_cors import cross_origin
 import time
 from datetime import datetime
-from services.auth_service import AuthService
-from utils.validators import validate_email, validate_password
-from utils.security import generate_csrf_token, validate_csrf_token
 import logging
 
-# Configure logging
+from services.auth_service import AuthService
+from utils.validators import validate_email, validate_password
+from utils.security import generate_csrf_token
+
 logger = logging.getLogger(__name__)
 
 # Create blueprint
@@ -92,6 +97,7 @@ def login():
         
         # Get client IP for logging
         client_ip = request.environ.get('HTTP_X_FORWARDED_FOR', request.environ.get('REMOTE_ADDR', 'unknown'))
+        user_agent = request.headers.get('User-Agent', 'unknown')
         
         # Check rate limiting
         if not AuthService.check_rate_limit(email):
@@ -124,7 +130,8 @@ def login():
                 user_data['user_id'], 
                 email, 
                 True, 
-                client_ip
+                client_ip,
+                user_agent
             )
             
             # Calculate response time for monitoring
@@ -149,7 +156,8 @@ def login():
                 None,  # user_id is None for failed attempts
                 email, 
                 False, 
-                client_ip
+                client_ip,
+                user_agent
             )
             
             # Calculate response time for monitoring

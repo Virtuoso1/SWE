@@ -21,6 +21,7 @@ class SAMLService:
     
     def __init__(self, app=None):
         self.app = app
+        self._initialized = False
         if app:
             self.init_app(app)
     
@@ -31,13 +32,17 @@ class SAMLService:
     
     def _init_providers(self):
         """Initialize SAML providers from database"""
+        if not self.app or not hasattr(self.app, 'config'):
+            # Defer initialization if no app context
+            return
+            
         try:
             conn = get_connection()
             if not conn:
                 return
                 
             cursor = conn.cursor(dictionary=True)
-            
+        
             # Get active SAML providers
             cursor.execute("""
                 SELECT provider_id, provider_name, display_name, entity_id, sso_url,
@@ -45,11 +50,11 @@ class SAMLService:
                 FROM saml_providers
                 WHERE is_active = TRUE
             """)
-            
+        
             providers = cursor.fetchall()
             cursor.close()
             conn.close()
-            
+        
             # Store provider configurations
             self.providers = {}
             for provider in providers:
@@ -62,9 +67,10 @@ class SAMLService:
                     'x509_cert': provider['x509_cert'],
                     'attribute_mapping': json.loads(provider['attribute_mapping']) if provider['attribute_mapping'] else {}
                 }
-            
+        
+            self._initialized = True
             logger.info(f"SAML providers initialized: {list(self.providers.keys())}")
-            
+        
         except Exception as e:
             logger.error(f"Error initializing SAML providers: {str(e)}")
             self.providers = {}

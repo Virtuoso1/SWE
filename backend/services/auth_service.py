@@ -1,38 +1,20 @@
-import bcrypt
-import time
-from typing import Optional, Dict, Any
-from db.helpers import get_user_by_email
-from db.database import get_connection
-import logging
+"""
+Authentication service for the Library Management System
+Handles all authentication-related business logic
+"""
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
+import time
+import logging
+from typing import Optional, Dict, Any
+from datetime import datetime
+
+from db.repositories import get_repositories
+from utils.validators import validate_email, validate_password
+
 logger = logging.getLogger(__name__)
 
 class AuthService:
     """Service class for handling authentication operations"""
-    
-    @staticmethod
-    def verify_password(plain_password: str, hashed_password: str) -> bool:
-        """
-        Verify a password against its hash using constant-time comparison
-        
-        Args:
-            plain_password: The password to verify
-            hashed_password: The hashed password to compare against
-            
-        Returns:
-            bool: True if password matches, False otherwise
-        """
-        try:
-            # Use bcrypt's built-in constant-time comparison
-            return bcrypt.checkpw(
-                plain_password.encode('utf-8'),
-                hashed_password.encode('utf-8')
-            )
-        except Exception as e:
-            logger.error(f"Password verification error: {str(e)}")
-            return False
     
     @staticmethod
     def authenticate_user(email: str, password: str) -> Optional[Dict[str, Any]]:
@@ -52,7 +34,8 @@ class AuthService:
             
         try:
             # Get user from database
-            user = get_user_by_email(email)
+            repos = get_repositories()
+            user = repos['user'].get_by_email(email)
             
             if not user:
                 # Use constant-time response to prevent timing attacks
@@ -61,21 +44,14 @@ class AuthService:
                 return None
                 
             # Check if user is active
-            if user.get('status') != 'active':
+            if user.status != 'active':
                 logger.warning(f"Authentication failed: User {email} is inactive")
                 return None
                 
             # Verify password
-            if AuthService.verify_password(password, user['password']):
-                # Remove sensitive data before returning
-                user_data = {
-                    'user_id': user['user_id'],
-                    'full_name': user['full_name'],
-                    'email': user['email'],
-                    'role': user['role'],
-                    'status': user['status'],
-                    'date_joined': user['date_joined']
-                }
+            if user.verify_password(password):
+                # Return user data without sensitive information
+                user_data = user.to_dict()
                 logger.info(f"Authentication successful for user: {email}")
                 return user_data
             else:
@@ -92,11 +68,12 @@ class AuthService:
         Simulate a password check to prevent timing attacks when user doesn't exist
         This ensures consistent response time regardless of whether user exists
         """
+        import bcrypt
         dummy_hash = bcrypt.hashpw("dummy".encode('utf-8'), bcrypt.gensalt())
         bcrypt.checkpw("wrong".encode('utf-8'), dummy_hash)
     
     @staticmethod
-    def log_login_attempt(user_id: int, email: str, success: bool, ip_address: str = None) -> None:
+    def log_login_attempt(user_id: int, email: str, success: bool, ip_address: str = None, user_agent: str = None) -> None:
         """
         Log login attempts for security monitoring
         
@@ -105,18 +82,20 @@ class AuthService:
             email: Email of the user
             success: Whether the login was successful
             ip_address: IP address of the request
+            user_agent: User agent string
         """
         try:
-            conn = get_connection()
-            if conn:
-                cursor = conn.cursor()
-                cursor.execute("""
-                    INSERT INTO login_attempts (user_id, email, success, ip_address, attempt_time)
-                    VALUES (%s, %s, %s, %s, NOW())
-                """, (user_id, email, success, ip_address))
-                conn.commit()
-                cursor.close()
-                conn.close()
+            from db.models import LoginAttempt
+            repos = get_repositories()
+            attempt = LoginAttempt(
+                user_id=user_id,
+                email=email,
+                success=success,
+                ip_address=ip_address,
+                user_agent=user_agent,
+                attempt_time=datetime.now()
+            )
+            repos['login_attempt'].create(attempt)
         except Exception as e:
             logger.error(f"Failed to log login attempt: {str(e)}")
     
@@ -134,23 +113,9 @@ class AuthService:
             bool: True if rate limit is not exceeded, False otherwise
         """
         try:
-            conn = get_connection()
-            if not conn:
-                return True  # Allow if DB connection fails
-                
-            cursor = conn.cursor()
-            cursor.execute("""
-                SELECT COUNT(*) FROM login_attempts 
-                WHERE email = %s AND success = 0 
-                AND attempt_time > DATE_SUB(NOW(), INTERVAL %s MINUTE)
-            """, (email, window_minutes))
-            
-            failed_attempts = cursor.fetchone()[0]
-            cursor.close()
-            conn.close()
-            
+            repos = get_repositories()
+            failed_attempts = repos['login_attempt'].get_failed_attempts(email, window_minutes)
             return failed_attempts < max_attempts
-            
         except Exception as e:
             logger.error(f"Rate limit check error: {str(e)}")
             return True  # Allow if check fails
@@ -170,37 +135,160 @@ class AuthService:
             Dict containing user data if registration successful, None otherwise
         """
         try:
+            # Validate input
+            if not validate_email(email):
+                logger.warning(f"Registration failed: Invalid email format {email}")
+                return None
+                
+            if not validate_password(password):
+                logger.warning(f"Registration failed: Invalid password for {email}")
+                return None
+            
             # Check if user already exists
-            existing_user = get_user_by_email(email)
+            repos = get_repositories()
+            existing_user = repos['user'].get_by_email(email)
             if existing_user:
                 logger.warning(f"Registration failed: User with email {email} already exists")
                 return None
             
-            # Import here to avoid circular imports
-            from db.helpers import add_user
+            # Create new user
+            from db.models import User
+            new_user = User(
+                full_name=full_name,
+                email=email,
+                password=password,  # Will be hashed in the repository
+                role=role,
+                status='active',
+                date_joined=datetime.now()
+            )
             
-            # Add user to database
-            add_user(full_name, email, password, role)
-            
-            # Get the newly created user
-            new_user = get_user_by_email(email)
-            
-            if new_user:
-                # Remove sensitive data before returning
-                user_data = {
-                    'user_id': new_user['user_id'],
-                    'full_name': new_user['full_name'],
-                    'email': new_user['email'],
-                    'role': new_user['role'],
-                    'status': new_user.get('status', 'active'),
-                    'date_joined': new_user.get('date_joined')
-                }
-                logger.info(f"User registered successfully: {email}")
-                return user_data
+            user_id = repos['user'].create(new_user)
+
+            if user_id:
+                # Get the newly created user
+                created_user = repos['user'].get_by_id(user_id)
+                if created_user:
+                    user_data = created_user.to_dict()
+                    logger.info(f"User registered successfully: {email}")
+                    return user_data
+                else:
+                    logger.error(f"Failed to retrieve newly created user: {email}")
+                    return None
             else:
-                logger.error(f"Failed to retrieve newly created user: {email}")
+                logger.error(f"Failed to create user: {email}")
                 return None
                 
         except Exception as e:
             logger.error(f"User registration error: {str(e)}")
             return None
+    
+    @staticmethod
+    def reset_password(user_id: int, new_password: str) -> bool:
+        """
+        Reset user password
+        
+        Args:
+            user_id: ID of the user
+            new_password: New plain text password
+            
+        Returns:
+            bool: True if password reset successful, False otherwise
+        """
+        try:
+            if not validate_password(new_password):
+                logger.warning(f"Password reset failed: Invalid password for user {user_id}")
+                return False
+            
+            repos = get_repositories()
+            return repos['user'].update_password(user_id, new_password)
+        except Exception as e:
+            logger.error(f"Password reset error: {str(e)}")
+            return False
+    
+    @staticmethod
+    def change_user_status(user_id: int, status: str) -> bool:
+        """
+        Change user status (activate/suspend)
+        
+        Args:
+            user_id: ID of the user
+            status: New status ('active' or 'inactive')
+            
+        Returns:
+            bool: True if status change successful, False otherwise
+        """
+        try:
+            repos = get_repositories()
+            user = repos['user'].get_by_id(user_id)
+            if not user:
+                logger.warning(f"Status change failed: User {user_id} not found")
+                return False
+            
+            if status == 'active':
+                return repos['user'].activate(user_id)
+            elif status == 'inactive':
+                return repos['user'].suspend(user_id)
+            else:
+                logger.warning(f"Status change failed: Invalid status {status}")
+                return False
+        except Exception as e:
+            logger.error(f"Status change error: {str(e)}")
+            return False
+    
+    @staticmethod
+    def get_user_profile(user_id: int) -> Optional[Dict[str, Any]]:
+        """
+        Get user profile information
+        
+        Args:
+            user_id: ID of the user
+            
+        Returns:
+            Dict containing user data if found, None otherwise
+        """
+        try:
+            repos = get_repositories()
+            user = repos['user'].get_by_id(user_id)
+            if user:
+                return user.to_dict()
+            return None
+        except Exception as e:
+            logger.error(f"Get user profile error: {str(e)}")
+            return None
+    
+    @staticmethod
+    def update_user_profile(user_id: int, full_name: str = None, email: str = None, role: str = None) -> bool:
+        """
+        Update user profile information
+        
+        Args:
+            user_id: ID of the user
+            full_name: New full name (optional)
+            email: New email (optional)
+            role: New role (optional)
+            
+        Returns:
+            bool: True if update successful, False otherwise
+        """
+        try:
+            repos = get_repositories()
+            user = repos['user'].get_by_id(user_id)
+            if not user:
+                logger.warning(f"Profile update failed: User {user_id} not found")
+                return False
+            
+            # Update fields if provided
+            if full_name is not None:
+                user.full_name = full_name
+            if email is not None:
+                if not validate_email(email):
+                    logger.warning(f"Profile update failed: Invalid email format {email}")
+                    return False
+                user.email = email
+            if role is not None:
+                user.role = role
+            
+            return repos['user'].update(user)
+        except Exception as e:
+            logger.error(f"Profile update error: {str(e)}")
+            return False

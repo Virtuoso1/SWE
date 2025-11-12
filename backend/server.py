@@ -13,7 +13,7 @@ from config import get_config
 # Import blueprints
 from routes.auth import auth_bp
 from routes.enterprise_auth import enterprise_auth_bp
-from routes.oauth_saml_auth import oauth_saml_bp
+# from routes.oauth_saml_auth import oauth_saml_bp  # Temporarily disabled
 from routes.privacy import privacy_bp
 from routes.audit import audit_bp
 from routes.rate_limit import rate_limit_bp
@@ -21,10 +21,10 @@ from routes.database_management import database_bp
 from routes.auth_monitoring import monitoring_bp
 from routes.user_behavior import behavior_bp
 from books.books import books_bp
-#from routes.users import users_bp
-#from routes.borrows import borrows_bp
-#from routes.fines import fines_bp
-#from routes.dashboard import dashboard_bp
+from routes.users import users_bp
+from routes.borrows import borrows_bp
+from routes.fines import fines_bp
+from routes.dashboard import dashboard_bp
 
 # Import services
 from services.jwt_service import JWTService
@@ -47,37 +47,45 @@ app = Flask(__name__)
 config = get_config()
 app.config.from_object(config)
 
-# Configure Redis session interface
-app.config['SESSION_TYPE'] = 'redis'
-app.config['SESSION_REDIS'] = redis_session_service._redis_client
-app.config['SESSION_INTERFACE'] = redis_session_service
+# Configure Redis session interface (temporarily disabled)
+# app.config['SESSION_TYPE'] = 'redis'
+# app.config['SESSION_REDIS'] = redis_session_service._redis_client
+# app.config['SESSION_INTERFACE'] = redis_session_service
+
+# Use filesystem session instead
+app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SESSION_FILE_DIR'] = './sessions'
+app.config['SESSION_PERMANENT'] = False
+app.config['SESSION_USE_SIGNER'] = True
+app.config['SESSION_KEY_PREFIX'] = 'library:'
 
 # Initialize JWT service
 jwt_service = JWTService(app)
 
-# Initialize cookie manager
-cookie_manager.init_app(app)
+# Initialize cookie manager (deferred by before_first_request in cookie_utils)
+# cookie_manager.init_app(app)
 
 # Initialize CSRF protection
 csrf = CSRFProtect(app)
 
+# Temporarily disable services that are causing issues
 # Initialize audit service
-audit_service.init_app(app)
+# audit_service.init_app(app)
 
 # Initialize rate limit service
-rate_limit_service.init_app(app)
+# rate_limit_service.init_app(app)
 
 # Initialize Redis session service
-redis_session_service.init_app(app)
+# redis_session_service.init_app(app)
 
 # Initialize database pool service
-db_pool_service.init_app(app)
+# db_pool_service.init_app(app)
 
 # Initialize authentication monitoring service
-auth_monitoring_service.init_app(app)
+# auth_monitoring_service.init_app(app)
 
 # Initialize user behavior service
-user_behavior_service.init_app(app)
+# user_behavior_service.init_app(app)
 
 # Initialize session (fallback)
 sess = Session()
@@ -107,18 +115,19 @@ session_dir.mkdir(exist_ok=True)
 # Register blueprints
 app.register_blueprint(auth_bp)
 app.register_blueprint(enterprise_auth_bp)
-app.register_blueprint(oauth_saml_bp)
+# app.register_blueprint(oauth_saml_bp)  # Temporarily disabled
 app.register_blueprint(privacy_bp)
-app.register_blueprint(audit_bp)
-app.register_blueprint(rate_limit_bp)
+# Temporarily disable blueprints that depend on services
+# app.register_blueprint(audit_bp)
+# app.register_blueprint(rate_limit_bp)
 app.register_blueprint(database_bp)
-app.register_blueprint(monitoring_bp)
-app.register_blueprint(behavior_bp)
+# app.register_blueprint(monitoring_bp)
+# app.register_blueprint(behavior_bp)
 app.register_blueprint(books_bp)
-#app.register_blueprint(users_bp)
-#app.register_blueprint(borrows_bp)
-#app.register_blueprint(fines_bp)
-#app.register_blueprint(dashboard_bp)
+app.register_blueprint(users_bp)
+app.register_blueprint(borrows_bp)
+app.register_blueprint(fines_bp)
+app.register_blueprint(dashboard_bp)
 
 @app.before_request
 def before_request():

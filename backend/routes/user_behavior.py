@@ -33,7 +33,7 @@ def analytics_admin_required(f):
 
 @behavior_bp.route('/track', methods=['POST'])
 @jwt_required
-@permission_required('analytics_track')
+@permission_required('analytics', 'track')
 def track_behavior_event():
     """Track a user behavior event"""
     try:
@@ -77,7 +77,7 @@ def track_behavior_event():
 
 @behavior_bp.route('/profile/<user_id>', methods=['GET'])
 @jwt_required
-@permission_required('analytics_view')
+@permission_required('analytics', 'view')
 def get_user_profile(user_id):
     """Get behavior profile for a user"""
     try:
@@ -110,7 +110,7 @@ def get_user_profile(user_id):
 
 @behavior_bp.route('/insights/<user_id>', methods=['GET'])
 @jwt_required
-@permission_required('analytics_view')
+@permission_required('analytics', 'view')
 def get_user_insights(user_id):
     """Get behavioral insights for a user"""
     try:
@@ -137,7 +137,7 @@ def get_user_insights(user_id):
 
 @behavior_bp.route('/events/<user_id>', methods=['GET'])
 @jwt_required
-@permission_required('analytics_view')
+@permission_required('analytics', 'view')
 def get_user_events(user_id):
     """Get behavior events for a user"""
     try:
@@ -185,7 +185,7 @@ def get_user_events(user_id):
 
 @behavior_bp.route('/patterns', methods=['GET'])
 @jwt_required
-@permission_required('analytics_view')
+@permission_required('analytics', 'view')
 def get_behavior_patterns():
     """Get aggregated behavior patterns"""
     try:
@@ -236,7 +236,7 @@ def get_behavior_patterns():
 
 @behavior_bp.route('/anomalies', methods=['GET'])
 @jwt_required
-@permission_required('analytics_view')
+@permission_required('analytics', 'view')
 def get_behavior_anomalies():
     """Get behavior anomalies"""
     try:
@@ -264,7 +264,7 @@ def get_behavior_anomalies():
 
 @behavior_bp.route('/dashboard', methods=['GET'])
 @jwt_required
-@permission_required('analytics_view')
+@permission_required('analytics', 'view')
 def get_behavior_dashboard():
     """Get behavior analytics dashboard"""
     try:
@@ -305,7 +305,7 @@ def get_behavior_dashboard():
 
 @behavior_bp.route('/risk-assessment', methods=['GET'])
 @jwt_required
-@permission_required('analytics_view')
+@permission_required('analytics', 'view')
 def get_risk_assessment():
     """Get risk assessment data"""
     try:
@@ -368,7 +368,7 @@ def get_risk_assessment():
 
 @behavior_bp.route('/export/profiles', methods=['GET'])
 @jwt_required
-@permission_required('analytics_export')
+@permission_required('analytics', 'export')
 def export_behavior_profiles():
     """Export behavior profiles"""
     try:

@@ -1,9 +1,12 @@
 import secrets
 import hashlib
 import hmac
-from typing import Optional
+from typing import Optional, Dict, Any
 from flask import session, request
 import time
+import logging
+
+logger = logging.getLogger(__name__)
 
 def generate_csrf_token() -> str:
     """
@@ -196,3 +199,168 @@ def verify_password_reset_token(token: str, expected_hash: str) -> bool:
         
     token_hash = hash_token(token)
     return hmac.compare_digest(token_hash, expected_hash)
+
+def is_authenticated() -> bool:
+    """
+    Check if current session is authenticated
+    
+    Returns:
+        bool: True if authenticated, False otherwise
+    """
+    return bool(session.get('authenticated') and session.get('user_id'))
+
+def get_current_user_id() -> Optional[int]:
+    """
+    Get current user ID from session
+    
+    Returns:
+        int: User ID if authenticated, None otherwise
+    """
+    return session.get('user_id')
+
+def get_current_user_role() -> Optional[str]:
+    """
+    Get current user role from session
+    
+    Returns:
+        str: User role if authenticated, None otherwise
+    """
+    return session.get('role')
+
+def has_permission(required_role: str) -> bool:
+    """
+    Check if current user has required role or higher
+    
+    Args:
+        required_role: Required role ('student', 'librarian', 'admin')
+        
+    Returns:
+        bool: True if user has permission, False otherwise
+    """
+    current_role = get_current_user_role()
+    
+    if not current_role:
+        return False
+    
+    # Role hierarchy
+    role_hierarchy = {
+        'student': 1,
+        'librarian': 2,
+        'admin': 3
+    }
+    
+    current_level = role_hierarchy.get(current_role, 0)
+    required_level = role_hierarchy.get(required_role, 0)
+    
+    return current_level >= required_level
+
+def is_admin() -> bool:
+    """
+    Check if current user is admin
+    
+    Returns:
+        bool: True if admin, False otherwise
+    """
+    return get_current_user_role() == 'admin'
+
+def is_librarian_or_admin() -> bool:
+    """
+    Check if current user is librarian or admin
+    
+    Returns:
+        bool: True if librarian or admin, False otherwise
+    """
+    role = get_current_user_role()
+    return role in ['librarian', 'admin']
+
+def log_security_event(event_type: str, details: Dict[str, Any] = None) -> None:
+    """
+    Log security-related events
+    
+    Args:
+        event_type: Type of security event
+        details: Additional event details
+    """
+    try:
+        client_ip = get_client_ip()
+        user_agent = request.headers.get('User-Agent', 'unknown')
+        user_id = get_current_user_id()
+        
+        log_data = {
+            'event_type': event_type,
+            'timestamp': time.time(),
+            'ip_address': client_ip,
+            'user_agent': user_agent,
+            'user_id': user_id
+        }
+        
+        if details:
+            log_data.update(details)
+        
+        logger.warning(f"Security event: {event_type} - {log_data}")
+    except Exception as e:
+        logger.error(f"Failed to log security event: {str(e)}")
+
+def validate_api_key(api_key: str) -> bool:
+    """
+    Validate API key (if API key authentication is used)
+    
+    Args:
+        api_key: API key to validate
+        
+    Returns:
+        bool: True if valid, False otherwise
+    """
+    # This would typically check against a database or configuration
+    # For now, return False as API key auth is not implemented
+    return False
+
+def encrypt_sensitive_data(data: str, key: str) -> str:
+    """
+    Encrypt sensitive data
+    
+    Args:
+        data: Data to encrypt
+        key: Encryption key
+        
+    Returns:
+        str: Encrypted data
+    """
+    try:
+        from cryptography.fernet import Fernet
+        f = Fernet(key.encode())
+        encrypted_data = f.encrypt(data.encode())
+        return encrypted_data.decode()
+    except ImportError:
+        logger.warning("Cryptography library not available, using simple encoding")
+        # Fallback to simple encoding (not secure for production)
+        import base64
+        return base64.b64encode(data.encode()).decode()
+    except Exception as e:
+        logger.error(f"Encryption error: {str(e)}")
+        return data
+
+def decrypt_sensitive_data(encrypted_data: str, key: str) -> str:
+    """
+    Decrypt sensitive data
+    
+    Args:
+        encrypted_data: Encrypted data
+        key: Decryption key
+        
+    Returns:
+        str: Decrypted data
+    """
+    try:
+        from cryptography.fernet import Fernet
+        f = Fernet(key.encode())
+        decrypted_data = f.decrypt(encrypted_data.encode())
+        return decrypted_data.decode()
+    except ImportError:
+        logger.warning("Cryptography library not available, using simple decoding")
+        # Fallback to simple decoding (not secure for production)
+        import base64
+        return base64.b64decode(encrypted_data.encode()).decode()
+    except Exception as e:
+        logger.error(f"Decryption error: {str(e)}")
+        return encrypted_data

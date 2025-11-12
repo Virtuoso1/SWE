@@ -39,14 +39,16 @@ class AuditService:
         self.app = app
         app.audit_service = self
         
-        # Initialize encryption
-        self._init_encryption()
-        
-        # Initialize signing
-        self._init_signing()
-        
-        # Create audit log table if needed
-        self._create_audit_table()
+        # Initialize within app context
+        with app.app_context():
+            # Initialize encryption
+            self._init_encryption()
+            
+            # Initialize signing
+            self._init_signing()
+            
+            # Create audit log table if needed
+            self._create_audit_table()
     
     def _init_encryption(self):
         """Initialize encryption for sensitive audit data"""
