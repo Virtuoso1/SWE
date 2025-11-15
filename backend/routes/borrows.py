@@ -66,6 +66,15 @@ def borrow_book():
                 'error': 'Book ID is required'
             }), 400
         
+        # Convert book_id to integer if it's a string
+        try:
+            book_id = int(book_id)
+        except (ValueError, TypeError):
+            return jsonify({
+                'success': False,
+                'error': 'Book ID must be a valid integer'
+            }), 400
+        
         if not isinstance(due_days, int) or due_days <= 0:
             return jsonify({
                 'success': False,
@@ -104,36 +113,42 @@ def return_book(borrow_id):
         borrow_id: ID of the borrow record
         
     Returns:
-        Success: Success message
-        Error: Error message
+        Success: Return result with details
+        Error: Error message with error code
     """
     try:
         # Check authentication
         if not require_auth():
             return jsonify({
                 'success': False,
-                'error': 'Authentication required'
+                'error': 'Authentication required',
+                'error_code': 'AUTH_REQUIRED'
             }), 401
         
-        # Return book
-        success = BorrowService.return_book(borrow_id)
+        # Get current user ID for validation
+        user_id = session.get('user_id')
         
-        if success:
-            return jsonify({
-                'success': True,
-                'message': 'Book returned successfully'
-            }), 200
+        # Return book with enhanced functionality
+        result = BorrowService.return_book(borrow_id, user_id)
+        
+        if result['success']:
+            return jsonify(result), 200
         else:
-            return jsonify({
-                'success': False,
-                'error': 'Failed to return book. Borrow record may not exist or already returned.'
-            }), 400
+            # Return appropriate HTTP status based on error code
+            status_code = 400
+            if result.get('error_code') == 'NOT_FOUND':
+                status_code = 404
+            elif result.get('error_code') == 'UNAUTHORIZED':
+                status_code = 403
+                
+            return jsonify(result), status_code
             
     except Exception as e:
         logger.error(f"Return book error: {str(e)}")
         return jsonify({
             'success': False,
-            'error': 'An internal error occurred'
+            'error': 'An internal error occurred',
+            'error_code': 'INTERNAL_ERROR'
         }), 500
 
 @borrows_bp.route('/my-borrows', methods=['GET'])
@@ -424,6 +439,64 @@ def get_borrow_statistics():
         
     except Exception as e:
         logger.error(f"Get borrow statistics error: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': 'An internal error occurred'
+        }), 500
+
+@borrows_bp.route('/overdue-books', methods=['GET'])
+@cross_origin(supports_credentials=True)
+def get_overdue_books():
+    """
+    Get overdue books with filtering and pagination
+    
+    Query Parameters:
+        page: Page number (default: 1)
+        limit: Number of items per page (default: 10)
+        sort_by: Sort field ('days_overdue', 'user_name', 'book_title', 'due_date')
+        order: Sort order ('asc', 'desc')
+        
+    Returns:
+        Success: Paginated list of overdue books
+        Error: Error message
+    """
+    try:
+        # Check authentication and authorization
+        if not require_auth():
+            return jsonify({
+                'success': False,
+                'error': 'Authentication required'
+            }), 401
+        
+        # Check if user is librarian or admin
+        user_role = session.get('role')
+        if user_role not in ['librarian', 'admin']:
+            return jsonify({
+                'success': False,
+                'error': 'Access denied. Librarian or admin role required.'
+            }), 403
+        
+        # Get query parameters
+        page = int(request.args.get('page', 1))
+        limit = int(request.args.get('limit', 10))
+        sort_by = request.args.get('sort_by', 'days_overdue')
+        order = request.args.get('order', 'desc')
+        
+        # Get overdue books
+        overdue_books = BorrowService.get_overdue_books_with_details(page, limit, sort_by, order)
+        
+        return jsonify({
+            'success': True,
+            'overdue_books': overdue_books,
+            'pagination': {
+                'page': page,
+                'limit': limit,
+                'total': len(overdue_books) if overdue_books else 0
+            }
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"Get overdue books error: {str(e)}")
         return jsonify({
             'success': False,
             'error': 'An internal error occurred'

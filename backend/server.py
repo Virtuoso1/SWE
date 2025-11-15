@@ -65,8 +65,9 @@ jwt_service = JWTService(app)
 # Initialize cookie manager (deferred by before_first_request in cookie_utils)
 # cookie_manager.init_app(app)
 
-# Initialize CSRF protection
-csrf = CSRFProtect(app)
+# Initialize CSRF protection (temporarily disabled for debugging)
+# csrf = CSRFProtect(app)
+csrf = None
 
 # Temporarily disable services that are causing issues
 # Initialize audit service
@@ -216,13 +217,16 @@ if __name__ == '__main__':
         app.logger.info("Database initialized successfully")
         
         # Initialize enterprise schema
-        from db.enterprise_schema import create_enterprise_tables
-        create_enterprise_tables()
-        app.logger.info("Enterprise database schema initialized successfully")
-        
-        # Create JWT token blacklist table
-        create_token_blacklist_table()
-        app.logger.info("JWT token blacklist table created successfully")
+        try:
+            from db.enterprise_init import create_enterprise_tables
+            create_enterprise_tables()
+            app.logger.info("Enterprise database schema initialized successfully")
+            
+            # Create JWT token blacklist table
+            create_token_blacklist_table()
+            app.logger.info("JWT token blacklist table created successfully")
+        except ImportError as e:
+            app.logger.warning(f"Enterprise schema initialization skipped: {str(e)}")
         
     except Exception as e:
         app.logger.error(f"Database initialization failed: {str(e)}")

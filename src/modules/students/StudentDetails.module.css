@@ -1,0 +1,593 @@
+/* StudentDetails Component - Modern Dashboard Styling */
+
+/* Container and Layout */
+.studentDetailsContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  min-height: 100vh;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Header Section */
+.studentDetailsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.studentDetailsHeader::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+  pointer-events: none;
+}
+
+.studentDetailsTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.studentDetailsTitle::before {
+  content: '👤';
+  font-size: 2.5rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.refreshButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  font-size: 0.95rem;
+}
+
+.refreshButton:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.refreshIcon {
+  font-size: 1.1rem;
+  transition: transform 0.3s ease;
+}
+
+.refreshButton:hover .refreshIcon {
+  transform: rotate(180deg);
+}
+
+/* Content Grid */
+.studentDetailsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+/* Info Cards */
+.infoCard {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.infoCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+}
+
+.infoCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+}
+
+.infoCardTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1a202c;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.infoCardTitle::before {
+  font-size: 1.5rem;
+}
+
+/* Info Grid Layout */
+.infoGrid {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.infoItem:hover {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-color: #cbd5e0;
+  transform: translateX(4px);
+}
+
+.infoLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #4a5568;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.infoValue {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #1a202c;
+  word-break: break-word;
+}
+
+/* Status Badge */
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.statusActive {
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+  color: white;
+  border-color: rgba(72, 187, 120, 0.3);
+  box-shadow: 0 4px 12px rgba(72, 187, 120, 0.2);
+}
+
+.statusActive:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(72, 187, 120, 0.3);
+}
+
+.statusInactive {
+  background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+  color: white;
+  border-color: rgba(245, 101, 101, 0.3);
+  box-shadow: 0 4px 12px rgba(245, 101, 101, 0.2);
+}
+
+.statusInactive:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(245, 101, 101, 0.3);
+}
+
+/* Address and Notes Cards */
+.addressCard {
+  grid-column: span 2;
+}
+
+.addressCard .infoValue {
+  padding: 1rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  line-height: 1.6;
+}
+
+.notesCard {
+  grid-column: span 2;
+}
+
+.notesCard .infoValue {
+  padding: 1rem;
+  background: linear-gradient(135deg, #fef5e7 0%, #ffffff 100%);
+  border-radius: 12px;
+  border: 1px solid #f6e05e;
+  line-height: 1.6;
+  color: #744210;
+}
+
+/* Action Buttons */
+.actionButtons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  box-shadow: 0 4px 12px rgba(74, 85, 104, 0.2);
+}
+
+.backButton:hover {
+  background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(74, 85, 104, 0.3);
+}
+
+/* Loading State */
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 1.5rem;
+}
+
+.loadingSpinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid #e2e8f0;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loadingText {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: #4a5568;
+}
+
+/* Error State */
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 1.5rem;
+  text-align: center;
+  padding: 2rem;
+}
+
+.errorIcon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.errorTitle {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #e53e3e;
+  margin: 0;
+}
+
+.errorMessage {
+  font-size: 1.125rem;
+  color: #4a5568;
+  margin: 0;
+  max-width: 500px;
+  line-height: 1.6;
+}
+
+.retryButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  box-shadow: 0 4px 12px rgba(229, 62, 62, 0.2);
+}
+
+.retryButton:hover {
+  background: linear-gradient(135deg, #c53030 0%, #9b2c2c 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(229, 62, 62, 0.3);
+}
+
+/* Empty State */
+.emptyContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 1.5rem;
+  text-align: center;
+  padding: 2rem;
+}
+
+.emptyIcon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.emptyTitle {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #4a5568;
+  margin: 0;
+}
+
+.emptyDescription {
+  font-size: 1.125rem;
+  color: #718096;
+  margin: 0;
+  max-width: 500px;
+  line-height: 1.6;
+}
+
+.emptyButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.emptyButton:hover {
+  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+/* Animations */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .studentDetailsContainer {
+    padding: 1.5rem;
+  }
+  
+  .studentDetailsGrid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .addressCard,
+  .notesCard {
+    grid-column: span 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .studentDetailsContainer {
+    padding: 1rem;
+  }
+  
+  .studentDetailsHeader {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+    padding: 1.25rem;
+  }
+  
+  .studentDetailsTitle {
+    font-size: 1.5rem;
+  }
+  
+  .infoCard {
+    padding: 1.5rem;
+  }
+  
+  .actionButtons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .backButton {
+    width: 100%;
+    max-width: 300px;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .studentDetailsContainer {
+    padding: 0.75rem;
+  }
+  
+  .studentDetailsHeader {
+    padding: 1rem;
+  }
+  
+  .studentDetailsTitle {
+    font-size: 1.25rem;
+  }
+  
+  .infoCard {
+    padding: 1rem;
+  }
+  
+  .infoItem {
+    padding: 0.75rem;
+  }
+  
+  .refreshButton {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* Dark Theme Support */
+@media (prefers-color-scheme: dark) {
+  .studentDetailsContainer {
+    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+  }
+  
+  .infoCard {
+    background: #2d3748;
+    border-color: rgba(74, 85, 104, 0.8);
+    color: #f7fafc;
+  }
+  
+  .infoCardTitle {
+    color: #f7fafc;
+    border-color: #4a5568;
+  }
+  
+  .infoItem {
+    background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+    border-color: #4a5568;
+  }
+  
+  .infoItem:hover {
+    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+    border-color: #718096;
+  }
+  
+  .infoLabel {
+    color: #a0aec0;
+  }
+  
+  .infoValue {
+    color: #f7fafc;
+  }
+  
+  .addressCard .infoValue {
+    background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+    border-color: #4a5568;
+    color: #f7fafc;
+  }
+  
+  .notesCard .infoValue {
+    background: linear-gradient(135deg, #744210 0%, #2d3748 100%);
+    border-color: #975a16;
+    color: #fef5e7;
+  }
+  
+  .loadingText {
+    color: #a0aec0;
+  }
+  
+  .emptyTitle {
+    color: #a0aec0;
+  }
+  
+  .emptyDescription {
+    color: #718096;
+  }
+}
+
+/* Accessibility Features */
+.refreshButton:focus,
+.backButton:focus,
+.retryButton:focus,
+.emptyButton:focus {
+  outline: 3px solid #667eea;
+  outline-offset: 2px;
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .infoCard {
+    border-width: 2px;
+    border-color: #000;
+  }
+  
+  .statusBadge {
+    border-width: 2px;
+  }
+  
+  .refreshButton,
+  .backButton,
+  .retryButton,
+  .emptyButton {
+    border-width: 2px;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .refreshButton:hover .refreshIcon {
+    transform: none;
+  }
+  
+  .infoCard:hover,
+  .infoItem:hover,
+  .statusBadge:hover,
+  .refreshButton:hover,
+  .backButton:hover,
+  .retryButton:hover,
+  .emptyButton:hover {
+    transform: none;
+  }
+  
+  .loadingSpinner {
+    animation: none;
+  }
+}

@@ -7,6 +7,7 @@ from typing import List, Optional, Dict, Any
 from datetime import datetime, timedelta
 import logging
 from .database import get_connection
+from .models import User, Book, BorrowRecord, Fine, ViewLog, LoginAttempt, LibraryStats
 
 logger = logging.getLogger(__name__)
 
@@ -59,12 +60,12 @@ class UserRepository(BaseRepository):
         """Create a new user"""
         user.hash_password(user.password)
         query = """
-            INSERT INTO users (full_name, email, password, role, status)
-            VALUES (%s, %s, %s, %s, %s)
+            INSERT INTO users (full_name, email, password, role, status, date_joined)
+            VALUES (%s, %s, %s, %s, %s, %s)
         """
         return self._execute_query(
-            query, 
-            (user.full_name, user.email, user.password, user.role, user.status),
+            query,
+            (user.full_name, user.email, user.password, user.role, user.status, user.date_joined),
             fetch_one=False, fetch_all=False
         )
     
@@ -243,12 +244,12 @@ class BorrowRepository(BaseRepository):
     def create(self, borrow: BorrowRecord) -> Optional[int]:
         """Create a new borrow record"""
         query = """
-            INSERT INTO borrow_records (user_id, book_id, due_date)
-            VALUES (%s, %s, %s)
+            INSERT INTO borrow_records (user_id, book_id, borrow_date, due_date, status)
+            VALUES (%s, %s, %s, %s, %s)
         """
         return self._execute_query(
             query,
-            (borrow.user_id, borrow.book_id, borrow.due_date),
+            (borrow.user_id, borrow.book_id, borrow.borrow_date, borrow.due_date, borrow.status),
             fetch_one=False, fetch_all=False
         )
     
@@ -261,9 +262,10 @@ class BorrowRepository(BaseRepository):
     def get_active_by_user(self, user_id: int) -> List[BorrowRecord]:
         """Get active borrows for a user"""
         query = """
-            SELECT br.*, b.title, b.author
+            SELECT br.*, b.title AS book_title, b.author AS book_author, u.full_name AS user_name, u.email AS user_email
             FROM borrow_records br
             JOIN books b ON br.book_id = b.book_id
+            JOIN users u ON br.user_id = u.user_id
             WHERE br.user_id = %s AND br.status = 'borrowed'
             ORDER BY br.borrow_date DESC
         """

@@ -1,0 +1,578 @@
+/* BookList Component - Modern Dashboard Styling */
+
+/* Container and Layout */
+.bookListContainer {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  min-height: 100vh;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Header Section */
+.bookListHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.bookListHeader::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+  pointer-events: none;
+}
+
+.bookListTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.bookListTitle::before {
+  content: '📚';
+  font-size: 2.5rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.refreshButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  font-size: 0.95rem;
+}
+
+.refreshButton:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.refreshIcon {
+  font-size: 1.1rem;
+  transition: transform 0.3s ease;
+}
+
+.refreshButton:hover .refreshIcon {
+  transform: rotate(180deg);
+}
+
+/* Table Section */
+.bookListSection {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  overflow: hidden;
+}
+
+.tableResponsive {
+  overflow-x: auto;
+  border-radius: 12px;
+}
+
+.booksTable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.95rem;
+}
+
+/* Table Header */
+.booksTable thead {
+  background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+  color: white;
+}
+
+.booksTable th {
+  padding: 1.25rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+}
+
+.booksTable th:first-child {
+  border-top-left-radius: 12px;
+}
+
+.booksTable th:last-child {
+  border-top-right-radius: 12px;
+}
+
+/* Table Body */
+.booksTable tbody {
+  background: white;
+}
+
+.booksTable tr {
+  transition: all 0.3s ease;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.booksTable tbody tr:hover {
+  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.booksTable tbody tr:last-child {
+  border-bottom: none;
+}
+
+.booksTable td {
+  padding: 1.25rem 1rem;
+  vertical-align: middle;
+  color: #2d3748;
+  font-weight: 500;
+}
+
+/* Book Title Cell */
+.booksTable td:first-child {
+  font-weight: 600;
+  color: #1a202c;
+  min-width: 200px;
+}
+
+/* Author Cell */
+.booksTable td:nth-child(2) {
+  color: #4a5568;
+  min-width: 150px;
+}
+
+/* Year Cell */
+.booksTable td:nth-child(3) {
+  text-align: center;
+  min-width: 100px;
+  color: #718096;
+}
+
+/* ISBN Cell */
+.booksTable td:nth-child(4) {
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+  color: #718096;
+  min-width: 120px;
+}
+
+/* Genre Cell */
+.booksTable td:nth-child(5) {
+  color: #4a5568;
+  min-width: 120px;
+}
+
+/* Status Cell */
+.booksTable td:last-child {
+  text-align: center;
+  min-width: 120px;
+}
+
+/* Status Badge */
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.statusAvailable {
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+  color: white;
+  border-color: rgba(72, 187, 120, 0.3);
+  box-shadow: 0 4px 12px rgba(72, 187, 120, 0.2);
+}
+
+.statusAvailable:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(72, 187, 120, 0.3);
+}
+
+.statusBorrowed {
+  background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+  color: white;
+  border-color: rgba(237, 137, 54, 0.3);
+  box-shadow: 0 4px 12px rgba(237, 137, 54, 0.2);
+}
+
+.statusBorrowed:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(237, 137, 54, 0.3);
+}
+
+/* Loading State */
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 1.5rem;
+}
+
+.loadingSpinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid #e2e8f0;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loadingText {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: #4a5568;
+}
+
+/* Error State */
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 1.5rem;
+  text-align: center;
+  padding: 2rem;
+}
+
+.errorIcon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.errorTitle {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #e53e3e;
+  margin: 0;
+}
+
+.errorMessage {
+  font-size: 1.125rem;
+  color: #4a5568;
+  margin: 0;
+  max-width: 500px;
+  line-height: 1.6;
+}
+
+.retryButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  box-shadow: 0 4px 12px rgba(229, 62, 62, 0.2);
+}
+
+.retryButton:hover {
+  background: linear-gradient(135deg, #c53030 0%, #9b2c2c 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(229, 62, 62, 0.3);
+}
+
+/* Empty State */
+.emptyContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 1.5rem;
+  text-align: center;
+  padding: 2rem;
+}
+
+.emptyIcon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.emptyTitle {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #4a5568;
+  margin: 0;
+}
+
+.emptyDescription {
+  font-size: 1.125rem;
+  color: #718096;
+  margin: 0;
+  max-width: 500px;
+  line-height: 1.6;
+}
+
+.emptyButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.emptyButton:hover {
+  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+/* Animations */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .bookListContainer {
+    padding: 1.5rem;
+  }
+  
+  .bookListHeader {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+    padding: 1.25rem;
+  }
+  
+  .bookListTitle {
+    font-size: 1.5rem;
+  }
+  
+  .bookListSection {
+    padding: 1.5rem;
+  }
+  
+  .booksTable {
+    font-size: 0.875rem;
+  }
+  
+  .booksTable th,
+  .booksTable td {
+    padding: 1rem 0.75rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .bookListContainer {
+    padding: 1rem;
+  }
+  
+  .bookListHeader {
+    padding: 1rem;
+  }
+  
+  .bookListTitle {
+    font-size: 1.25rem;
+  }
+  
+  .bookListSection {
+    padding: 1rem;
+  }
+  
+  .booksTable th,
+  .booksTable td {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.8rem;
+  }
+  
+  .statusBadge {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.75rem;
+  }
+  
+  .refreshButton {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .bookListContainer {
+    padding: 0.75rem;
+  }
+  
+  .bookListHeader {
+    padding: 0.75rem;
+  }
+  
+  .bookListTitle {
+    font-size: 1.125rem;
+  }
+  
+  .bookListSection {
+    padding: 0.75rem;
+  }
+  
+  .booksTable th,
+  .booksTable td {
+    padding: 0.5rem 0.25rem;
+    font-size: 0.75rem;
+  }
+  
+  .statusBadge {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.7rem;
+  }
+}
+
+/* Dark Theme Support */
+@media (prefers-color-scheme: dark) {
+  .bookListContainer {
+    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+  }
+  
+  .bookListSection {
+    background: #2d3748;
+    border-color: rgba(74, 85, 104, 0.8);
+  }
+  
+  .booksTable tbody {
+    background: #2d3748;
+  }
+  
+  .booksTable tr {
+    border-color: #4a5568;
+  }
+  
+  .booksTable tbody tr:hover {
+    background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+  }
+  
+  .booksTable td {
+    color: #f7fafc;
+  }
+  
+  .booksTable td:first-child {
+    color: #f7fafc;
+  }
+  
+  .booksTable td:nth-child(2),
+  .booksTable td:nth-child(5) {
+    color: #e2e8f0;
+  }
+  
+  .booksTable td:nth-child(3),
+  .booksTable td:nth-child(4) {
+    color: #a0aec0;
+  }
+  
+  .loadingText {
+    color: #a0aec0;
+  }
+  
+  .emptyTitle {
+    color: #a0aec0;
+  }
+  
+  .emptyDescription {
+    color: #718096;
+  }
+}
+
+/* Accessibility Features */
+.refreshButton:focus,
+.retryButton:focus,
+.emptyButton:focus {
+  outline: 3px solid #667eea;
+  outline-offset: 2px;
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .bookListSection {
+    border-width: 2px;
+    border-color: #000;
+  }
+  
+  .booksTable th {
+    border-bottom-width: 3px;
+  }
+  
+  .booksTable tr {
+    border-width: 2px;
+  }
+  
+  .statusBadge {
+    border-width: 2px;
+  }
+  
+  .refreshButton,
+  .retryButton,
+  .emptyButton {
+    border-width: 2px;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .refreshButton:hover .refreshIcon {
+    transform: none;
+  }
+  
+  .booksTable tbody tr:hover,
+  .statusBadge:hover,
+  .refreshButton:hover,
+  .retryButton:hover,
+  .emptyButton:hover {
+    transform: none;
+  }
+  
+  .loadingSpinner {
+    animation: none;
+  }
+}

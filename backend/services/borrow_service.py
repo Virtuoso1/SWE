@@ -52,10 +52,8 @@ class BorrowService:
                 logger.warning(f"Borrow failed: Book {book_id} is not available")
                 return None
             
-            # Check if user already has an active borrow for this book
-            if repos['borrow'].check_existing_borrow(user_id, book_id):
-                logger.warning(f"Borrow failed: User {user_id} already has an active borrow for book {book_id}")
-                return None
+            # Note: Allowing users to borrow the same book multiple times
+            # This check is removed to allow multiple copies of the same book to be borrowed
             
             # Calculate due date
             due_date = datetime.now() + timedelta(days=due_days)
@@ -76,10 +74,24 @@ class BorrowService:
                 if repos['book'].adjust_quantity(book_id, 0, -1):
                     logger.info(f"Book {book_id} borrowed successfully by user {user_id}")
                     
-                    # Get the created borrow record
+                    # Get the created borrow record with JOIN data
                     created_borrow = repos['borrow'].get_by_id(borrow_id)
                     if created_borrow:
-                        return created_borrow.to_dict()
+                        # Convert to dictionary and add JOIN data
+                        borrow_dict = created_borrow.to_dict()
+                        
+                        # Add book and user details
+                        book = repos['book'].get_by_id(book_id)
+                        user = repos['user'].get_by_id(user_id)
+                        
+                        if book:
+                            borrow_dict['book_title'] = book.title
+                            borrow_dict['book_author'] = book.author
+                        if user:
+                            borrow_dict['user_name'] = user.full_name
+                            borrow_dict['user_email'] = user.email
+                            
+                        return borrow_dict
                 
                 logger.error(f"Failed to update book quantity for book {book_id}")
                 return None
@@ -92,43 +104,114 @@ class BorrowService:
             return None
     
     @staticmethod
-    def return_book(borrow_id: int) -> bool:
+    def return_book(borrow_id: int, user_id: int = None) -> Dict[str, Any]:
         """
-        Return a borrowed book
+        Return a borrowed book with comprehensive validation and penalty calculation
         
         Args:
             borrow_id: ID of the borrow record
+            user_id: ID of the user attempting to return (for validation)
             
         Returns:
-            bool: True if return successful, False otherwise
+            Dict containing return result with details
         """
         try:
             repos = get_repositories()
-            # Get borrow record
+            # Get borrow record with JOIN data
             borrow_record = repos['borrow'].get_by_id(borrow_id)
             if not borrow_record:
                 logger.warning(f"Return failed: Borrow record {borrow_id} not found")
-                return False
+                return {
+                    'success': False,
+                    'error': 'Borrow record not found',
+                    'error_code': 'NOT_FOUND'
+                }
+            
+            # Validate user can return this book (only borrower or admin/librarian can return)
+            if user_id and borrow_record.user_id != user_id:
+                # Check if user is admin or librarian
+                user = repos['user'].get_by_id(user_id)
+                if not user or user.role not in ['admin', 'librarian']:
+                    logger.warning(f"Return failed: User {user_id} not authorized to return borrow record {borrow_id}")
+                    return {
+                        'success': False,
+                        'error': 'You can only return books that you borrowed',
+                        'error_code': 'UNAUTHORIZED'
+                    }
             
             if borrow_record.status != 'borrowed':
-                logger.warning(f"Return failed: Borrow record {borrow_id} is not active")
-                return False
+                logger.warning(f"Return failed: Borrow record {borrow_id} is not active (status: {borrow_record.status})")
+                return {
+                    'success': False,
+                    'error': 'This book has already been returned',
+                    'error_code': 'ALREADY_RETURNED'
+                }
             
-            # Update borrow record
+            # Calculate days overdue and penalty if applicable
+            current_date = datetime.now()
+            days_overdue = 0
+            penalty_amount = 0.0
+            
+            if borrow_record.due_date and current_date > borrow_record.due_date:
+                days_overdue = (current_date - borrow_record.due_date).days
+                # Calculate penalty: $0.50 per day overdue
+                penalty_amount = days_overdue * 0.50
+                
+                # Create fine record if penalty > 0
+                if penalty_amount > 0:
+                    from services.fine_service import FineService
+                    fine_result = FineService.create_fine(
+                        borrow_id=borrow_id,
+                        amount=penalty_amount,
+                        reason=f"Late return: {days_overdue} days overdue"
+                    )
+                    if not fine_result['success']:
+                        logger.error(f"Failed to create fine for overdue book: {fine_result.get('error', 'Unknown error')}")
+            
+            # Update borrow record with return date and status
             if not repos['borrow'].return_book(borrow_id):
                 logger.error(f"Failed to update borrow record {borrow_id}")
-                return False
+                return {
+                    'success': False,
+                    'error': 'Failed to update borrow record',
+                    'error_code': 'UPDATE_FAILED'
+                }
             
-            # Update book quantity
+            # Update book quantity (increment available copies)
             if not repos['book'].adjust_quantity(borrow_record.book_id, 0, 1):
                 logger.error(f"Failed to update book quantity for book {borrow_record.book_id}")
-                return False
+                return {
+                    'success': False,
+                    'error': 'Failed to update book availability',
+                    'error_code': 'QUANTITY_UPDATE_FAILED'
+                }
+            
+            # Get book and user details for response
+            book = repos['book'].get_by_id(borrow_record.book_id)
+            user = repos['user'].get_by_id(borrow_record.user_id)
             
             logger.info(f"Book returned successfully for borrow record {borrow_id}")
-            return True
+            
+            return {
+                'success': True,
+                'message': 'Book returned successfully',
+                'borrow_id': borrow_id,
+                'book_title': book.title if book else 'Unknown Book',
+                'book_author': book.author if book else 'Unknown Author',
+                'user_name': user.full_name if user else 'Unknown User',
+                'return_date': current_date.isoformat(),
+                'days_overdue': days_overdue,
+                'penalty_amount': penalty_amount,
+                'fine_created': penalty_amount > 0
+            }
+            
         except Exception as e:
             logger.error(f"Return book error: {str(e)}")
-            return False
+            return {
+                'success': False,
+                'error': 'An internal error occurred during book return',
+                'error_code': 'INTERNAL_ERROR'
+            }
     
     @staticmethod
     def get_user_active_borrows(user_id: int) -> List[Dict[str, Any]]:
@@ -268,9 +351,77 @@ class BorrowService:
             }
         except Exception as e:
             logger.error(f"Get borrow statistics error: {str(e)}")
-            return {
-                'total_borrows': 0,
-                'active_borrows': 0,
-                'returned_borrows': 0,
-                'overdue_borrows': 0
-            }
+            return {}
+    
+    @staticmethod
+    def get_overdue_books_with_details(page: int = 1, limit: int = 10, sort_by: str = 'days_overdue', order: str = 'desc') -> List[Dict[str, Any]]:
+        """
+        Get overdue books with detailed information for dashboard
+        
+        Args:
+            page: Page number for pagination
+            limit: Number of items per page
+            sort_by: Field to sort by ('days_overdue', 'user_name', 'book_title', 'due_date')
+            order: Sort order ('asc', 'desc')
+            
+        Returns:
+            List of dictionaries containing overdue book information
+        """
+        try:
+            repos = get_repositories()
+            
+            # Get all overdue borrow records
+            overdue_borrows = repos['borrow'].get_overdue()
+            
+            # Calculate days overdue for each record
+            current_date = datetime.now()
+            overdue_books_with_details = []
+            
+            for borrow in overdue_borrows:
+                # Calculate days overdue
+                if borrow.due_date:
+                    days_overdue = (current_date - borrow.due_date).days
+                else:
+                    days_overdue = 0
+                
+                # Get book details
+                book = repos['book'].get_by_id(borrow.book_id)
+                
+                # Get user details
+                user = repos['user'].get_by_id(borrow.user_id)
+                
+                overdue_books_with_details.append({
+                    'borrow_id': borrow.borrow_id,
+                    'book_id': borrow.book_id,
+                    'book_title': book.title if book else 'Unknown Book',
+                    'book_author': book.author if book else 'Unknown Author',
+                    'user_id': borrow.user_id,
+                    'user_name': user.full_name if user else 'Unknown User',
+                    'due_date': borrow.due_date.isoformat() if borrow.due_date else None,
+                    'days_overdue': days_overdue,
+                    'borrow_date': borrow.borrow_date.isoformat() if borrow.borrow_date else None
+                })
+            
+            # Sort the results
+            if sort_by == 'days_overdue':
+                overdue_books_with_details.sort(key=lambda x: x['days_overdue'], reverse=(order == 'desc'))
+            elif sort_by == 'user_name':
+                overdue_books_with_details.sort(key=lambda x: x['user_name'], reverse=(order == 'desc'))
+            elif sort_by == 'book_title':
+                overdue_books_with_details.sort(key=lambda x: x['book_title'], reverse=(order == 'desc'))
+            elif sort_by == 'due_date':
+                overdue_books_with_details.sort(key=lambda x: x['due_date'], reverse=(order == 'desc'))
+            else:
+                # Default sort by days overdue
+                overdue_books_with_details.sort(key=lambda x: x['days_overdue'], reverse=(order == 'desc'))
+            
+            # Apply pagination
+            start_index = (page - 1) * limit
+            end_index = start_index + limit
+            paginated_results = overdue_books_with_details[start_index:end_index]
+            
+            return paginated_results
+            
+        except Exception as e:
+            logger.error(f"Get overdue books with details error: {str(e)}")
+            return []

@@ -183,6 +183,28 @@ class AuthService:
             return None
     
     @staticmethod
+    def create_user(full_name: str, email: str, password: str, role: str = "student") -> bool:
+        """
+        Create a new user (for admin/librarian use)
+        
+        Args:
+            full_name: User's full name
+            email: User's email address
+            password: User's plain text password
+            role: User's role (default: 'student')
+            
+        Returns:
+            bool: True if user creation successful, False otherwise
+        """
+        try:
+            # Use the existing register_user method
+            result = AuthService.register_user(email, password, full_name, role)
+            return result is not None
+        except Exception as e:
+            logger.error(f"User creation error: {str(e)}")
+            return False
+    
+    @staticmethod
     def reset_password(user_id: int, new_password: str) -> bool:
         """
         Reset user password

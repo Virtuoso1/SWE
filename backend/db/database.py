@@ -5,8 +5,8 @@ from pathlib import Path
 import os
 import logging
 
-# Load env
-env_path = Path(__file__).resolve().parent / ".env"
+# Load env from backend directory
+env_path = Path(__file__).resolve().parent.parent / ".env"
 load_dotenv(dotenv_path=env_path)
 
 # Configure logging
@@ -16,12 +16,32 @@ def create_database_if_missing(silent = False):
     """Create database if it doesn't exist"""
     db_name = os.getenv("DB_NAME")
     try:
+        # Validate required environment variables
+        db_host = os.getenv("DB_HOST")
+        db_port = os.getenv("DB_PORT", "3306")
+        db_user = os.getenv("DB_USER")
+        db_password = os.getenv("DB_PASSWORD")
+        
+        if not all([db_host, db_user, db_password, db_name]):
+            error_msg = "Missing required database configuration. Please check DB_HOST, DB_USER, DB_PASSWORD, and DB_NAME environment variables."
+            if not silent:
+                logger.error(error_msg)
+            raise ValueError(error_msg)
+        
         conn = mysql.connector.connect(
-            host=os.getenv("DB_HOST"),
-            port=os.getenv("DB_PORT"),
-            user=os.getenv("DB_USER"),
-            password=os.getenv("DB_PASSWORD")
+            host=db_host,
+            port=int(db_port),
+            user=db_user,
+            password=db_password
         )
+        
+        # Test the connection
+        if not conn.is_connected():
+            error_msg = "Failed to establish database connection. Please verify your credentials and database server status."
+            if not silent:
+                logger.error(error_msg)
+            raise ConnectionError(error_msg)
+            
         cursor = conn.cursor()
         if not silent:
             cursor.execute(f"CREATE DATABASE IF NOT EXISTS `{db_name}`")
@@ -29,23 +49,56 @@ def create_database_if_missing(silent = False):
         cursor.close()
         conn.close()
     except Error as e:
+        error_msg = f"Error while creating database: {e}"
         if not silent:
-            logger.error(f"Error while creating database: {e}")
+            logger.error(error_msg)
+            # Provide specific guidance for authentication errors
+            if "Access denied" in str(e) or "authentication" in str(e).lower():
+                logger.error("Authentication failed. Please verify DB_USER and DB_PASSWORD in your .env file.")
+            elif "Can't connect" in str(e):
+                logger.error("Connection failed. Please verify DB_HOST and DB_PORT, and ensure MySQL server is running.")
 
 def get_connection(silent = False):
     """Get database connection"""
     try:
+        # Validate required environment variables
+        db_host = os.getenv("DB_HOST")
+        db_port = os.getenv("DB_PORT", "3306")
+        db_user = os.getenv("DB_USER")
+        db_password = os.getenv("DB_PASSWORD")
+        db_name = os.getenv("DB_NAME")
+        
+        if not all([db_host, db_user, db_password, db_name]):
+            error_msg = "Missing required database configuration. Please check DB_HOST, DB_USER, DB_PASSWORD, and DB_NAME environment variables."
+            if not silent:
+                logger.error(error_msg)
+            raise ValueError(error_msg)
+        
         conn = mysql.connector.connect(
-            host=os.getenv("DB_HOST"),
-            port=os.getenv("DB_PORT"),
-            user=os.getenv("DB_USER"),
-            password=os.getenv("DB_PASSWORD"),
-            database=os.getenv("DB_NAME")
+            host=db_host,
+            port=int(db_port),
+            user=db_user,
+            password=db_password,
+            database=db_name
         )
+        
+        # Test the connection
+        if not conn.is_connected():
+            error_msg = "Failed to establish database connection. Please verify your credentials and database server status."
+            if not silent:
+                logger.error(error_msg)
+            raise ConnectionError(error_msg)
+            
         return conn
     except Error as e:
+        error_msg = f"Database connection error: {e}"
         if not silent:
-            logger.error(f"Database connection error: {e}")
+            logger.error(error_msg)
+            # Provide specific guidance for authentication errors
+            if "Access denied" in str(e) or "authentication" in str(e).lower():
+                logger.error("Authentication failed. Please verify DB_USER and DB_PASSWORD in your .env file.")
+            elif "Can't connect" in str(e):
+                logger.error("Connection failed. Please verify DB_HOST and DB_PORT, and ensure MySQL server is running.")
         return None
 
 def init_db(silent = False):

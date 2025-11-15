@@ -5,6 +5,7 @@ Handles HTTP requests and responses for authentication
 
 from flask import Blueprint, request, jsonify, session
 from flask_cors import cross_origin
+from flask_wtf.csrf import CSRFError
 import time
 from datetime import datetime
 import logging
@@ -343,8 +344,11 @@ def register():
         if not full_name:
             full_name = email.split('@')[0]  # Use email prefix as default name
         
+        # Extract role (optional, defaults to 'student')
+        role = data.get('role', 'student')
+        
         # Register user using AuthService
-        user_data = AuthService.register_user(email, password, full_name)
+        user_data = AuthService.register_user(email, password, full_name, role)
         
         if user_data:
             logger.info(f"New user registered: {email}")

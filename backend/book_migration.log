@@ -1,0 +1,257 @@
+2025-11-15 20:51:20,443 - INFO - ================================================================================
+2025-11-15 20:51:20,443 - INFO - STARTING BOOK MIGRATION
+2025-11-15 20:51:20,443 - INFO - ================================================================================
+2025-11-15 20:51:20,444 - INFO - Initializing database connection...
+2025-11-15 20:51:20,590 - INFO - package: mysql.connector.plugins
+2025-11-15 20:51:20,590 - INFO - plugin_name: caching_sha2_password
+2025-11-15 20:51:20,592 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2025-11-15 20:51:20,596 - INFO - Database 'library_db' is ready.
+2025-11-15 20:51:20,713 - INFO - Transaction started
+2025-11-15 20:51:20,975 - INFO - Additional tables created or verified successfully
+2025-11-15 20:51:21,008 - INFO - Populated 11 genres and 19 publishers
+2025-11-15 20:51:21,008 - INFO - Processing book 1/20: To Kill a Mockingbird
+2025-11-15 20:51:21,016 - INFO - Successfully inserted book: To Kill a Mockingbird (ID: 1)
+2025-11-15 20:51:21,021 - INFO - Processing book 2/20: 1984
+2025-11-15 20:51:21,026 - INFO - Successfully inserted book: 1984 (ID: 2)
+2025-11-15 20:51:21,028 - INFO - Processing book 3/20: Sapiens: A Brief History of Humankind
+2025-11-15 20:51:21,031 - INFO - Successfully inserted book: Sapiens: A Brief History of Humankind (ID: 3)
+2025-11-15 20:51:21,033 - INFO - Processing book 4/20: The Catcher in the Rye
+2025-11-15 20:51:21,036 - INFO - Successfully inserted book: The Catcher in the Rye (ID: 4)
+2025-11-15 20:51:21,038 - INFO - Processing book 5/20: A Brief History of Time
+2025-11-15 20:51:21,041 - INFO - Successfully inserted book: A Brief History of Time (ID: 5)
+2025-11-15 20:51:21,043 - INFO - Processing book 6/20: Pride and Prejudice
+2025-11-15 20:51:21,048 - ERROR - Error inserting book Pride and Prejudice: 1264 (22003): Out of range value for column 'year_published' at row 1
+2025-11-15 20:51:21,048 - INFO - Processing book 7/20: The Diary of a Young Girl
+2025-11-15 20:51:21,051 - INFO - Successfully inserted book: The Diary of a Young Girl (ID: 6)
+2025-11-15 20:51:21,053 - INFO - Processing book 8/20: Clean Code: A Handbook of Agile Software Craftsmanship
+2025-11-15 20:51:21,056 - INFO - Successfully inserted book: Clean Code: A Handbook of Agile Software Craftsmanship (ID: 7)
+2025-11-15 20:51:21,058 - INFO - Processing book 9/20: The Great Gatsby
+2025-11-15 20:51:21,061 - INFO - Successfully inserted book: The Great Gatsby (ID: 8)
+2025-11-15 20:51:21,063 - INFO - Processing book 10/20: Thinking, Fast and Slow
+2025-11-15 20:51:21,066 - INFO - Successfully inserted book: Thinking, Fast and Slow (ID: 9)
+2025-11-15 20:51:21,068 - INFO - Processing book 11/20: The Art of War
+2025-11-15 20:51:21,068 - ERROR - Invalid publication year: -500
+2025-11-15 20:51:21,068 - INFO - Processing book 12/20: Steve Jobs
+2025-11-15 20:51:21,071 - INFO - Successfully inserted book: Steve Jobs (ID: 10)
+2025-11-15 20:51:21,072 - INFO - Processing book 13/20: The Lean Startup
+2025-11-15 20:51:21,076 - INFO - Successfully inserted book: The Lean Startup (ID: 11)
+2025-11-15 20:51:21,078 - INFO - Processing book 14/20: The Hobbit
+2025-11-15 20:51:21,081 - INFO - Successfully inserted book: The Hobbit (ID: 12)
+2025-11-15 20:51:21,083 - INFO - Processing book 15/20: Cosmos
+2025-11-15 20:51:21,086 - INFO - Successfully inserted book: Cosmos (ID: 13)
+2025-11-15 20:51:21,088 - INFO - Processing book 16/20: The Alchemist
+2025-11-15 20:51:21,091 - INFO - Successfully inserted book: The Alchemist (ID: 14)
+2025-11-15 20:51:21,093 - INFO - Processing book 17/20: Guns, Germs, and Steel
+2025-11-15 20:51:21,097 - INFO - Successfully inserted book: Guns, Germs, and Steel (ID: 15)
+2025-11-15 20:51:21,099 - INFO - Processing book 18/20: The Design of Everyday Things
+2025-11-15 20:51:21,103 - INFO - Successfully inserted book: The Design of Everyday Things (ID: 16)
+2025-11-15 20:51:21,104 - INFO - Processing book 19/20: Long Walk to Freedom
+2025-11-15 20:51:21,108 - INFO - Successfully inserted book: Long Walk to Freedom (ID: 17)
+2025-11-15 20:51:21,110 - INFO - Processing book 20/20: The Silent Patient
+2025-11-15 20:51:21,113 - INFO - Successfully inserted book: The Silent Patient (ID: 18)
+2025-11-15 20:51:21,120 - INFO - Transaction committed successfully
+2025-11-15 20:51:21,121 - INFO - Database connection closed
+2025-11-15 20:51:21,122 - INFO - ================================================================================
+2025-11-15 20:51:21,122 - INFO - MIGRATION RESULTS
+2025-11-15 20:51:21,122 - INFO - ================================================================================
+2025-11-15 20:51:21,122 - INFO - Total books processed: 20
+2025-11-15 20:51:21,122 - INFO - Successfully inserted: 18
+2025-11-15 20:51:21,122 - INFO - Skipped duplicates: 0
+2025-11-15 20:51:21,122 - INFO - Failed insertions: 2
+2025-11-15 20:51:21,123 - INFO - Duration: 0:00:00.677760
+2025-11-15 20:51:21,123 - ERROR - Errors encountered:
+2025-11-15 20:51:21,123 - ERROR -   - Insertion failed for Pride and Prejudice
+2025-11-15 20:51:21,123 - ERROR -   - Validation failed for The Art of War
+2025-11-15 20:51:21,123 - INFO - ================================================================================
+2025-11-15 20:51:21,124 - WARNING - Migration completed with some failures
+2025-11-15 20:53:27,917 - INFO - ================================================================================
+2025-11-15 20:53:27,918 - INFO - STARTING BOOK MIGRATION
+2025-11-15 20:53:27,918 - INFO - ================================================================================
+2025-11-15 20:53:27,918 - INFO - Initializing database connection...
+2025-11-15 20:53:28,340 - INFO - package: mysql.connector.plugins
+2025-11-15 20:53:28,341 - INFO - plugin_name: caching_sha2_password
+2025-11-15 20:53:28,344 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2025-11-15 20:53:28,351 - INFO - Database 'library_db' is ready.
+2025-11-15 20:53:28,543 - INFO - Transaction started
+2025-11-15 20:53:28,555 - INFO - Additional tables created or verified successfully
+2025-11-15 20:53:28,583 - INFO - Populated 11 genres and 19 publishers
+2025-11-15 20:53:28,583 - INFO - Processing book 1/20: To Kill a Mockingbird
+2025-11-15 20:53:28,587 - INFO - Book already exists: To Kill a Mockingbird (ISBN: 978-0-06-112008-4)
+2025-11-15 20:53:28,587 - INFO - Processing book 2/20: 1984
+2025-11-15 20:53:28,589 - INFO - Book already exists: 1984 (ISBN: 978-0-452-28423-4)
+2025-11-15 20:53:28,590 - INFO - Processing book 3/20: Sapiens: A Brief History of Humankind
+2025-11-15 20:53:28,592 - INFO - Book already exists: Sapiens: A Brief History of Humankind (ISBN: 978-0-06-231609-7)
+2025-11-15 20:53:28,592 - INFO - Processing book 4/20: The Catcher in the Rye
+2025-11-15 20:53:28,594 - INFO - Book already exists: The Catcher in the Rye (ISBN: 978-0-316-76948-0)
+2025-11-15 20:53:28,594 - INFO - Processing book 5/20: A Brief History of Time
+2025-11-15 20:53:28,596 - INFO - Book already exists: A Brief History of Time (ISBN: 978-0-553-38016-3)
+2025-11-15 20:53:28,597 - INFO - Processing book 6/20: Pride and Prejudice
+2025-11-15 20:53:28,602 - INFO - Successfully inserted book: Pride and Prejudice (ID: 19)
+2025-11-15 20:53:28,604 - INFO - Processing book 7/20: The Diary of a Young Girl
+2025-11-15 20:53:28,607 - INFO - Book already exists: The Diary of a Young Girl (ISBN: 978-0-553-29698-3)
+2025-11-15 20:53:28,607 - INFO - Processing book 8/20: Clean Code: A Handbook of Agile Software Craftsmanship
+2025-11-15 20:53:28,610 - INFO - Book already exists: Clean Code: A Handbook of Agile Software Craftsmanship (ISBN: 978-0-13-235088-4)
+2025-11-15 20:53:28,610 - INFO - Processing book 9/20: The Great Gatsby
+2025-11-15 20:53:28,613 - INFO - Book already exists: The Great Gatsby (ISBN: 978-0-7432-7356-5)
+2025-11-15 20:53:28,613 - INFO - Processing book 10/20: Thinking, Fast and Slow
+2025-11-15 20:53:28,616 - INFO - Book already exists: Thinking, Fast and Slow (ISBN: 978-0-374-53355-7)
+2025-11-15 20:53:28,616 - INFO - Processing book 11/20: The Art of War
+2025-11-15 20:53:28,621 - ERROR - Error inserting book The Art of War: 1264 (22003): Out of range value for column 'year_published' at row 1
+2025-11-15 20:53:28,621 - INFO - Processing book 12/20: Steve Jobs
+2025-11-15 20:53:28,623 - INFO - Book already exists: Steve Jobs (ISBN: 978-1-4516-4853-9)
+2025-11-15 20:53:28,624 - INFO - Processing book 13/20: The Lean Startup
+2025-11-15 20:53:28,626 - INFO - Book already exists: The Lean Startup (ISBN: 978-0-307-88789-4)
+2025-11-15 20:53:28,626 - INFO - Processing book 14/20: The Hobbit
+2025-11-15 20:53:28,628 - INFO - Book already exists: The Hobbit (ISBN: 978-0-547-92822-7)
+2025-11-15 20:53:28,629 - INFO - Processing book 15/20: Cosmos
+2025-11-15 20:53:28,633 - INFO - Book already exists: Cosmos (ISBN: 978-0-345-53943-4)
+2025-11-15 20:53:28,633 - INFO - Processing book 16/20: The Alchemist
+2025-11-15 20:53:28,635 - INFO - Book already exists: The Alchemist (ISBN: 978-0-06-250217-4)
+2025-11-15 20:53:28,636 - INFO - Processing book 17/20: Guns, Germs, and Steel
+2025-11-15 20:53:28,638 - INFO - Book already exists: Guns, Germs, and Steel (ISBN: 978-0-393-31755-8)
+2025-11-15 20:53:28,638 - INFO - Processing book 18/20: The Design of Everyday Things
+2025-11-15 20:53:28,641 - INFO - Book already exists: The Design of Everyday Things (ISBN: 978-0-465-05065-9)
+2025-11-15 20:53:28,641 - INFO - Processing book 19/20: Long Walk to Freedom
+2025-11-15 20:53:28,643 - INFO - Book already exists: Long Walk to Freedom (ISBN: 978-0-316-54818-2)
+2025-11-15 20:53:28,644 - INFO - Processing book 20/20: The Silent Patient
+2025-11-15 20:53:28,646 - INFO - Book already exists: The Silent Patient (ISBN: 978-1-250-30169-7)
+2025-11-15 20:53:28,650 - INFO - Transaction committed successfully
+2025-11-15 20:53:28,651 - INFO - Database connection closed
+2025-11-15 20:53:28,651 - INFO - ================================================================================
+2025-11-15 20:53:28,651 - INFO - MIGRATION RESULTS
+2025-11-15 20:53:28,651 - INFO - ================================================================================
+2025-11-15 20:53:28,652 - INFO - Total books processed: 20
+2025-11-15 20:53:28,652 - INFO - Successfully inserted: 1
+2025-11-15 20:53:28,652 - INFO - Skipped duplicates: 18
+2025-11-15 20:53:28,652 - INFO - Failed insertions: 1
+2025-11-15 20:53:28,652 - INFO - Duration: 0:00:00.732844
+2025-11-15 20:53:28,653 - ERROR - Errors encountered:
+2025-11-15 20:53:28,653 - ERROR -   - Insertion failed for The Art of War
+2025-11-15 20:53:28,653 - INFO - ================================================================================
+2025-11-15 20:53:28,653 - WARNING - Migration completed with some failures
+2025-11-15 20:54:52,744 - INFO - ================================================================================
+2025-11-15 20:54:52,744 - INFO - STARTING BOOK MIGRATION
+2025-11-15 20:54:52,745 - INFO - ================================================================================
+2025-11-15 20:54:52,745 - INFO - Initializing database connection...
+2025-11-15 20:54:53,096 - INFO - package: mysql.connector.plugins
+2025-11-15 20:54:53,097 - INFO - plugin_name: caching_sha2_password
+2025-11-15 20:54:53,099 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2025-11-15 20:54:53,107 - INFO - Database 'library_db' is ready.
+2025-11-15 20:54:53,295 - INFO - Transaction started
+2025-11-15 20:54:53,306 - INFO - Additional tables created or verified successfully
+2025-11-15 20:54:53,333 - INFO - Populated 11 genres and 19 publishers
+2025-11-15 20:54:53,334 - INFO - Processing book 1/20: To Kill a Mockingbird
+2025-11-15 20:54:53,336 - INFO - Book already exists: To Kill a Mockingbird (ISBN: 978-0-06-112008-4)
+2025-11-15 20:54:53,336 - INFO - Processing book 2/20: 1984
+2025-11-15 20:54:53,338 - INFO - Book already exists: 1984 (ISBN: 978-0-452-28423-4)
+2025-11-15 20:54:53,339 - INFO - Processing book 3/20: Sapiens: A Brief History of Humankind
+2025-11-15 20:54:53,341 - INFO - Book already exists: Sapiens: A Brief History of Humankind (ISBN: 978-0-06-231609-7)
+2025-11-15 20:54:53,341 - INFO - Processing book 4/20: The Catcher in the Rye
+2025-11-15 20:54:53,344 - INFO - Book already exists: The Catcher in the Rye (ISBN: 978-0-316-76948-0)
+2025-11-15 20:54:53,344 - INFO - Processing book 5/20: A Brief History of Time
+2025-11-15 20:54:53,347 - INFO - Book already exists: A Brief History of Time (ISBN: 978-0-553-38016-3)
+2025-11-15 20:54:53,347 - INFO - Processing book 6/20: Pride and Prejudice
+2025-11-15 20:54:53,350 - INFO - Book already exists: Pride and Prejudice (ISBN: 978-0-14-143951-8)
+2025-11-15 20:54:53,350 - INFO - Processing book 7/20: The Diary of a Young Girl
+2025-11-15 20:54:53,352 - INFO - Book already exists: The Diary of a Young Girl (ISBN: 978-0-553-29698-3)
+2025-11-15 20:54:53,353 - INFO - Processing book 8/20: Clean Code: A Handbook of Agile Software Craftsmanship
+2025-11-15 20:54:53,355 - INFO - Book already exists: Clean Code: A Handbook of Agile Software Craftsmanship (ISBN: 978-0-13-235088-4)
+2025-11-15 20:54:53,355 - INFO - Processing book 9/20: The Great Gatsby
+2025-11-15 20:54:53,357 - INFO - Book already exists: The Great Gatsby (ISBN: 978-0-7432-7356-5)
+2025-11-15 20:54:53,358 - INFO - Processing book 10/20: Thinking, Fast and Slow
+2025-11-15 20:54:53,360 - INFO - Book already exists: Thinking, Fast and Slow (ISBN: 978-0-374-53355-7)
+2025-11-15 20:54:53,360 - INFO - Processing book 11/20: The Art of War
+2025-11-15 20:54:53,365 - INFO - Successfully inserted book: The Art of War (ID: 20)
+2025-11-15 20:54:53,368 - INFO - Processing book 12/20: Steve Jobs
+2025-11-15 20:54:53,370 - INFO - Book already exists: Steve Jobs (ISBN: 978-1-4516-4853-9)
+2025-11-15 20:54:53,370 - INFO - Processing book 13/20: The Lean Startup
+2025-11-15 20:54:53,372 - INFO - Book already exists: The Lean Startup (ISBN: 978-0-307-88789-4)
+2025-11-15 20:54:53,372 - INFO - Processing book 14/20: The Hobbit
+2025-11-15 20:54:53,375 - INFO - Book already exists: The Hobbit (ISBN: 978-0-547-92822-7)
+2025-11-15 20:54:53,375 - INFO - Processing book 15/20: Cosmos
+2025-11-15 20:54:53,377 - INFO - Book already exists: Cosmos (ISBN: 978-0-345-53943-4)
+2025-11-15 20:54:53,378 - INFO - Processing book 16/20: The Alchemist
+2025-11-15 20:54:53,380 - INFO - Book already exists: The Alchemist (ISBN: 978-0-06-250217-4)
+2025-11-15 20:54:53,380 - INFO - Processing book 17/20: Guns, Germs, and Steel
+2025-11-15 20:54:53,382 - INFO - Book already exists: Guns, Germs, and Steel (ISBN: 978-0-393-31755-8)
+2025-11-15 20:54:53,383 - INFO - Processing book 18/20: The Design of Everyday Things
+2025-11-15 20:54:53,386 - INFO - Book already exists: The Design of Everyday Things (ISBN: 978-0-465-05065-9)
+2025-11-15 20:54:53,386 - INFO - Processing book 19/20: Long Walk to Freedom
+2025-11-15 20:54:53,388 - INFO - Book already exists: Long Walk to Freedom (ISBN: 978-0-316-54818-2)
+2025-11-15 20:54:53,388 - INFO - Processing book 20/20: The Silent Patient
+2025-11-15 20:54:53,391 - INFO - Book already exists: The Silent Patient (ISBN: 978-1-250-30169-7)
+2025-11-15 20:54:53,394 - INFO - Transaction committed successfully
+2025-11-15 20:54:53,395 - INFO - Database connection closed
+2025-11-15 20:54:53,395 - INFO - ================================================================================
+2025-11-15 20:54:53,396 - INFO - MIGRATION RESULTS
+2025-11-15 20:54:53,396 - INFO - ================================================================================
+2025-11-15 20:54:53,396 - INFO - Total books processed: 20
+2025-11-15 20:54:53,396 - INFO - Successfully inserted: 1
+2025-11-15 20:54:53,396 - INFO - Skipped duplicates: 19
+2025-11-15 20:54:53,397 - INFO - Failed insertions: 0
+2025-11-15 20:54:53,397 - INFO - Duration: 0:00:00.650288
+2025-11-15 20:54:53,397 - INFO - ================================================================================
+2025-11-15 20:54:53,397 - INFO - Migration completed successfully
+2025-11-16 01:51:13,785 - INFO - ================================================================================
+2025-11-16 01:51:13,786 - INFO - STARTING BOOK MIGRATION
+2025-11-16 01:51:13,787 - INFO - ================================================================================
+2025-11-16 01:51:13,787 - INFO - Initializing database connection...
+2025-11-16 01:51:14,296 - INFO - package: mysql.connector.plugins
+2025-11-16 01:51:14,297 - INFO - plugin_name: caching_sha2_password
+2025-11-16 01:51:14,300 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2025-11-16 01:51:14,307 - INFO - Database 'library_db' is ready.
+2025-11-16 01:51:14,546 - INFO - Transaction started
+2025-11-16 01:51:14,574 - INFO - Additional tables created or verified successfully
+2025-11-16 01:51:14,608 - INFO - Populated 11 genres and 19 publishers
+2025-11-16 01:51:14,609 - INFO - Processing book 1/20: To Kill a Mockingbird
+2025-11-16 01:51:14,612 - INFO - Book already exists: To Kill a Mockingbird (ISBN: 978-0-06-112008-4)
+2025-11-16 01:51:14,612 - INFO - Processing book 2/20: 1984
+2025-11-16 01:51:14,614 - INFO - Book already exists: 1984 (ISBN: 978-0-452-28423-4)
+2025-11-16 01:51:14,615 - INFO - Processing book 3/20: Sapiens: A Brief History of Humankind
+2025-11-16 01:51:14,618 - INFO - Book already exists: Sapiens: A Brief History of Humankind (ISBN: 978-0-06-231609-7)
+2025-11-16 01:51:14,619 - INFO - Processing book 4/20: The Catcher in the Rye
+2025-11-16 01:51:14,621 - INFO - Book already exists: The Catcher in the Rye (ISBN: 978-0-316-76948-0)
+2025-11-16 01:51:14,621 - INFO - Processing book 5/20: A Brief History of Time
+2025-11-16 01:51:14,624 - INFO - Book already exists: A Brief History of Time (ISBN: 978-0-553-38016-3)
+2025-11-16 01:51:14,624 - INFO - Processing book 6/20: Pride and Prejudice
+2025-11-16 01:51:14,627 - INFO - Book already exists: Pride and Prejudice (ISBN: 978-0-14-143951-8)
+2025-11-16 01:51:14,628 - INFO - Processing book 7/20: The Diary of a Young Girl
+2025-11-16 01:51:14,631 - INFO - Book already exists: The Diary of a Young Girl (ISBN: 978-0-553-29698-3)
+2025-11-16 01:51:14,631 - INFO - Processing book 8/20: Clean Code: A Handbook of Agile Software Craftsmanship
+2025-11-16 01:51:14,634 - INFO - Book already exists: Clean Code: A Handbook of Agile Software Craftsmanship (ISBN: 978-0-13-235088-4)
+2025-11-16 01:51:14,635 - INFO - Processing book 9/20: The Great Gatsby
+2025-11-16 01:51:14,637 - INFO - Book already exists: The Great Gatsby (ISBN: 978-0-7432-7356-5)
+2025-11-16 01:51:14,638 - INFO - Processing book 10/20: Thinking, Fast and Slow
+2025-11-16 01:51:14,640 - INFO - Book already exists: Thinking, Fast and Slow (ISBN: 978-0-374-53355-7)
+2025-11-16 01:51:14,640 - INFO - Processing book 11/20: The Art of War
+2025-11-16 01:51:14,643 - INFO - Book already exists: The Art of War (ISBN: 978-1-59030-225-5)
+2025-11-16 01:51:14,643 - INFO - Processing book 12/20: Steve Jobs
+2025-11-16 01:51:14,645 - INFO - Book already exists: Steve Jobs (ISBN: 978-1-4516-4853-9)
+2025-11-16 01:51:14,646 - INFO - Processing book 13/20: The Lean Startup
+2025-11-16 01:51:14,648 - INFO - Book already exists: The Lean Startup (ISBN: 978-0-307-88789-4)
+2025-11-16 01:51:14,649 - INFO - Processing book 14/20: The Hobbit
+2025-11-16 01:51:14,652 - INFO - Book already exists: The Hobbit (ISBN: 978-0-547-92822-7)
+2025-11-16 01:51:14,652 - INFO - Processing book 15/20: Cosmos
+2025-11-16 01:51:14,656 - INFO - Book already exists: Cosmos (ISBN: 978-0-345-53943-4)
+2025-11-16 01:51:14,656 - INFO - Processing book 16/20: The Alchemist
+2025-11-16 01:51:14,659 - INFO - Book already exists: The Alchemist (ISBN: 978-0-06-250217-4)
+2025-11-16 01:51:14,659 - INFO - Processing book 17/20: Guns, Germs, and Steel
+2025-11-16 01:51:14,662 - INFO - Book already exists: Guns, Germs, and Steel (ISBN: 978-0-393-31755-8)
+2025-11-16 01:51:14,662 - INFO - Processing book 18/20: The Design of Everyday Things
+2025-11-16 01:51:14,664 - INFO - Book already exists: The Design of Everyday Things (ISBN: 978-0-465-05065-9)
+2025-11-16 01:51:14,665 - INFO - Processing book 19/20: Long Walk to Freedom
+2025-11-16 01:51:14,667 - INFO - Book already exists: Long Walk to Freedom (ISBN: 978-0-316-54818-2)
+2025-11-16 01:51:14,667 - INFO - Processing book 20/20: The Silent Patient
+2025-11-16 01:51:14,670 - INFO - Book already exists: The Silent Patient (ISBN: 978-1-250-30169-7)
+2025-11-16 01:51:14,671 - INFO - Transaction committed successfully
+2025-11-16 01:51:14,672 - INFO - Database connection closed
+2025-11-16 01:51:14,672 - INFO - ================================================================================
+2025-11-16 01:51:14,673 - INFO - MIGRATION RESULTS
+2025-11-16 01:51:14,673 - INFO - ================================================================================
+2025-11-16 01:51:14,673 - INFO - Total books processed: 20
+2025-11-16 01:51:14,673 - INFO - Successfully inserted: 0
+2025-11-16 01:51:14,673 - INFO - Skipped duplicates: 20
+2025-11-16 01:51:14,674 - INFO - Failed insertions: 0
+2025-11-16 01:51:14,674 - INFO - Duration: 0:00:00.885352
+2025-11-16 01:51:14,674 - INFO - ================================================================================
+2025-11-16 01:51:14,674 - INFO - Migration completed successfully

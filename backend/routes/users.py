@@ -415,3 +415,126 @@ def reset_user_password(user_id):
             'success': False,
             'error': 'An internal error occurred'
         }), 500
+
+@users_bp.route('/my-profile', methods=['GET'])
+@cross_origin(supports_credentials=True)
+def get_my_profile():
+    """
+    Get current user's profile (for students to view their own info)
+    
+    Returns:
+        Success: User profile data
+        Error: Error message
+    """
+    try:
+        # Check authentication
+        if not require_auth():
+            return jsonify({
+                'success': False,
+                'error': 'Authentication required'
+            }), 401
+        
+        # Get current user's profile
+        user_id = session.get('user_id')
+        profile = AuthService.get_user_profile(user_id)
+        
+        if profile:
+            return jsonify({
+                'success': True,
+                'user': profile
+            }), 200
+        else:
+            return jsonify({
+                'success': False,
+                'error': 'User profile not found'
+            }), 404
+            
+    except Exception as e:
+        logger.error(f"Get my profile error: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': 'An internal error occurred'
+        }), 500
+
+@users_bp.route('/create', methods=['POST'])
+@cross_origin(supports_credentials=True)
+def create_user():
+    """
+    Create a new user (librarian/admin only)
+    
+    Expected JSON payload:
+    {
+        "full_name": "John Doe",
+        "email": "john@example.com",
+        "password": "password123",
+        "role": "student"
+    }
+    
+    Returns:
+        Success: User creation success message
+        Error: Error message
+    """
+    try:
+        # Check authentication and authorization
+        if not require_auth():
+            return jsonify({
+                'success': False,
+                'error': 'Authentication required'
+            }), 401
+        
+        # Check if user is librarian or admin
+        user_role = session.get('role')
+        if user_role not in ['librarian', 'admin']:
+            return jsonify({
+                'success': False,
+                'error': 'Access denied. Librarian or admin role required.'
+            }), 403
+        
+        # Get JSON data
+        data = request.get_json()
+        if not data:
+            return jsonify({
+                'success': False,
+                'error': 'Invalid request format. JSON data required.'
+            }), 400
+        
+        # Extract required fields
+        full_name = data.get('full_name')
+        email = data.get('email')
+        password = data.get('password')
+        role = data.get('role', 'student')
+        
+        # Validate required fields
+        if not full_name or not email or not password:
+            return jsonify({
+                'success': False,
+                'error': 'Full name, email, and password are required'
+            }), 400
+        
+        # Validate role
+        if role not in ['student', 'librarian', 'admin']:
+            return jsonify({
+                'success': False,
+                'error': 'Invalid role. Must be student, librarian, or admin'
+            }), 400
+        
+        # Create user
+        success = AuthService.create_user(full_name, email, password, role)
+        
+        if success:
+            return jsonify({
+                'success': True,
+                'message': 'User created successfully'
+            }), 201
+        else:
+            return jsonify({
+                'success': False,
+                'error': 'Failed to create user. Email may already exist.'
+            }), 400
+            
+    except Exception as e:
+        logger.error(f"Create user error: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': 'An internal error occurred'
+        }), 500
